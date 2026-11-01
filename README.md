@@ -42,7 +42,7 @@ Diagrams: [`docs/diagrams/`](docs/diagrams/). Open the `.drawio` files at <https
 ## Run it (Docker)
 
 ```bash
-git clone --recurse-submodules https://github.com/friedcheesee/vajralink-twofactoranxiety-cyberforge.git vajra-link
+git clone --recurse-submodules <this-repo-url> vajra-link
 cd vajra-link
 docker compose up --build
 ```
