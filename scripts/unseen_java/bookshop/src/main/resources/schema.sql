@@ -1,0 +1,2 @@
+CREATE TABLE books (isbn VARCHAR(20) PRIMARY KEY, title VARCHAR(200), author VARCHAR(100), price DECIMAL(8,2));
+CREATE TABLE orders (id VARCHAR(20) PRIMARY KEY, customer VARCHAR(100), isbn VARCHAR(20), qty INT);

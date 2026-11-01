@@ -1,0 +1,19 @@
+{
+  "app": "scripts/unseen_java/bookshop",
+  "pairs": [
+    {"cwe": "CWE-89", "file": "src/main/java/com/pagecraft/bookshop/CatalogController.java", "line": 26, "url": "/catalog/search", "param": "term"},
+    {"cwe": "CWE-89", "file": "src/main/java/com/pagecraft/bookshop/OrderService.java", "line": 17, "url": "/api/orders/{orderId}", "param": "orderId"},
+    {"cwe": "CWE-79", "file": "src/main/java/com/pagecraft/bookshop/ReviewController.java", "line": 14, "url": "/reviews/preview", "param": "comment"},
+    {"cwe": "CWE-78", "file": "src/main/java/com/pagecraft/bookshop/ShippingController.java", "line": 17, "url": "/api/shipping/trace", "param": "host"},
+    {"cwe": "CWE-22", "file": "src/main/java/com/pagecraft/bookshop/AccountController.java", "line": 16, "url": "/account/avatar", "param": "name"},
+    {"cwe": "CWE-601", "file": "src/main/java/com/pagecraft/bookshop/CheckoutController.java", "line": 16, "url": "/checkout/return", "param": "next"}
+  ],
+  "code_only": [
+    {"cwe": "CWE-798", "file": "src/main/java/com/pagecraft/bookshop/GatewayClient.java", "line": 7}
+  ],
+  "decoys": [
+    {"cwe": "CWE-89", "file": "src/main/java/com/pagecraft/bookshop/CatalogController.java", "line": 38, "url": "/catalog/title"},
+    {"cwe": "CWE-79", "file": "src/main/java/com/pagecraft/bookshop/ReviewController.java", "line": 19, "url": "/feedback/submit"},
+    {"cwe": "CWE-601", "file": "src/main/java/com/pagecraft/bookshop/CheckoutController.java", "line": 22, "url": "/checkout/continue"}
+  ]
+}

@@ -1,0 +1,17 @@
+# Mirrors [project.dependencies] in pyproject.toml. Kept as a separate plain requirements file so the
+# Docker image can `pip install` without needing the uv_build backend or an editable project install -
+# vajra/ is run directly (`python -m uvicorn vajra.api:app`), never imported as an installed package.
+bandit>=1.9.4
+cryptography>=50.0.2
+fastapi>=0.162.0
+httpx>=0.28.1
+hvac>=2.4.0
+jinja2>=3.1.6
+openai>=3.42.0
+playwright>=1.64.1
+pydantic>=2.14.2
+python-dotenv>=1.2.4
+python-multipart>=0.0.32
+rich>=15.0.0
+semgrep>=1.79.0
+uvicorn>=0.54.0

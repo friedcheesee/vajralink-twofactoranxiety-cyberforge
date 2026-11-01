@@ -1,0 +1,54 @@
+services:
+  vulnerableapp:
+    # The organizers' own test app (PRD section 4) - official image from SasanLabs, unmodified.
+    image: sasanlabs/owasp-vulnerableapp:latest
+    ports:
+      # Host side is 9191, not 9090: a bare-metal VulnerableApp instance commonly already holds 9090 on
+      # dev machines (this project was run that way before Docker). The container's *internal* port is
+      # still 9090 either way - vajra-link reaches it at http://vulnerableapp:9090 over the compose
+      # network regardless of this host mapping, so VAJRA_DEFAULT_TARGET below doesn't change.
+      # To browse this instance directly from the host: http://localhost:9191/VulnerableApp
+      - "9191:9090"
+    networks:
+      - vajra_net
+    restart: unless-stopped
+
+  vajra-link:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - vulnerableapp
+    extra_hosts:
+      # Lets the container reach an app running on the host as http://host.docker.internal:<port>
+      # (Docker Desktop provides this name already; Linux needs this line).
+      - "host.docker.internal:host-gateway"
+    environment:
+      # The Compose service name "vulnerableapp" resolves via Docker's embedded DNS; assert_safe_target()
+      # resolves it and checks the result is a private/loopback address before anything is scanned.
+      - VAJRA_DEFAULT_TARGET=http://vulnerableapp:9090/VulnerableApp
+      - VAJRA_DB_PATH=/app/data/vajra_state.db
+      # localhost / 127.0.0.1 targets are rewritten to host.docker.internal (your machine) inside the container.
+      - VAJRA_IN_DOCKER=1
+      # OPENAI_API_KEY / OPENAI_MODEL / VAULT_ADDR / VAULT_TOKEN come from .env below if present - every
+      # AI and Vault feature degrades honestly (no fake results) when they're unset, so this still runs
+      # end to end without any of them.
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      # Bind-mounted, not copied into the image, so pointing Step 1 at a different repo on your machine
+      # (or one freshly cloned by VajraLink itself) works the same as running it outside Docker.
+      - ./targets:/app/targets
+      - ./screenshots:/app/screenshots
+      - vajra_data:/app/data
+    networks:
+      - vajra_net
+    restart: unless-stopped
+
+networks:
+  vajra_net:
+    driver: bridge
+
+volumes:
+  vajra_data:

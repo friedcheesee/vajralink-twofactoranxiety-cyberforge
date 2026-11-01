@@ -1,0 +1,21 @@
+# Keep the build context small and fast - none of these are needed inside the image. targets/ (cloned
+# benchmark apps, hundreds of MB) is bind-mounted at runtime by docker-compose.yml instead of being baked
+# into the image, so "point it at a new repo" keeps working exactly like it does outside Docker.
+targets/
+.venv/
+.venv-win/
+.git/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.db
+*.sarif
+screenshots/
+.tools/
+*.log
+node_modules/
+.pytest_cache/
+.mypy_cache/
+.env
+*.postman_collection.json

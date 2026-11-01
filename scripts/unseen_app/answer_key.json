@@ -1,0 +1,19 @@
+{
+  "app": "scripts/unseen_app/shop",
+  "pairs": [
+    {"cwe": "CWE-89", "file": "app.py", "line": 36, "url": "/api/products/search", "param": "name"},
+    {"cwe": "CWE-89", "file": "services.py", "line": 7, "url": "/api/orders", "param": "customer"},
+    {"cwe": "CWE-79", "file": "app.py", "line": 54, "url": "/search", "param": "q"},
+    {"cwe": "CWE-78", "file": "app.py", "line": 64, "url": "/api/shipping/ping", "param": "host"},
+    {"cwe": "CWE-22", "file": "app.py", "line": 70, "url": "/api/invoice", "param": "file"},
+    {"cwe": "CWE-601", "file": "app.py", "line": 76, "url": "/go", "param": "next"}
+  ],
+  "code_only": [
+    {"cwe": "CWE-798", "file": "app.py", "line": 18}
+  ],
+  "decoys": [
+    {"cwe": "CWE-89", "file": "services.py", "line": 11, "url": "/api/products/{pid}"},
+    {"cwe": "CWE-79", "file": "app.py", "line": 59, "url": "/review"},
+    {"cwe": "CWE-601", "file": "app.py", "line": 81, "url": "/back"}
+  ]
+}

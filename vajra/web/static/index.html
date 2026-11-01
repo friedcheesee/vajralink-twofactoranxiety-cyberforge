@@ -1,0 +1,2614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VajraLink | SAST-DAST Correlation Platform</title>
+  <link rel="icon" type="image/svg+xml" href="/static/vajralink-mark.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-focus: #cbd5e1;
+      --emerald: #059669;
+      --emerald-light: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --crimson: #b42318;
+      --crimson-light: #fff1f2;
+      --crimson-border: #fecdd3;
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --amber-border: #fde68a;
+      --sky: #1f4e8c;
+      --sky-light: #f0f9ff;
+      --sky-border: #bae6fd;
+      --purple: #1f3b63;
+      --purple-light: #f4f6f9;
+      --purple-border: #d3d9e3;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    code, pre { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+
+    /* Top Header */
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .logo-badge {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--emerald);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease-in-out;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .btn-emerald {
+      background: var(--emerald);
+      color: #ffffff;
+    }
+    .btn-emerald:hover { background: #047857; }
+    .btn-outline {
+      background: var(--bg-surface);
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+    .btn-outline:hover {
+      border-color: var(--text-main);
+      color: var(--text-main);
+      background: var(--bg-subtle);
+    }
+    .btn-purple {
+      background: var(--purple-light);
+      border-color: var(--purple-border);
+      color: var(--purple);
+    }
+    .btn-purple:hover {
+      background: var(--purple);
+      color: #ffffff;
+    }
+
+    /* Container */
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 1.75rem 2rem;
+    }
+
+    /* Stepper Navigation */
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .step-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .step-card:hover {
+      border-color: var(--emerald-border);
+      transform: translateY(-1px);
+    }
+    .step-card.active {
+      border-color: var(--emerald);
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15), var(--shadow-md);
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .step-card.active .step-number {
+      background: var(--emerald);
+      color: #ffffff;
+    }
+    .step-card.completed .step-number {
+      background: var(--emerald-light);
+      color: var(--emerald);
+      border: 1px solid var(--emerald-border);
+    }
+    .step-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .step-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Step Panels */
+    .step-panel {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .step-panel.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.45;
+    }
+
+    /* Form Fields */
+    .form-group { margin-bottom: 1rem; }
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+    }
+
+    /* Progress Bars */
+    .progress-box {
+      margin: 1.25rem 0;
+      display: none;
+    }
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #059669, #067647);
+      width: 0%;
+      transition: width 0.25s ease-out;
+      border-radius: 999px;
+    }
+    .progress-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.4rem;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    /* AI Executive Summary Card */
+    .ai-summary-card {
+      background: #ffffff;
+      border: 1px solid var(--emerald-border);
+      border-left: 4px solid var(--emerald);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .ai-summary-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--emerald);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .ai-summary-text {
+      font-size: 0.83rem;
+      color: var(--text-main);
+      line-height: 1.55;
+      margin-bottom: 1rem;
+    }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.75rem;
+    }
+    .tool-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-size: 0.78rem;
+    }
+    .tool-card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.3rem;
+    }
+    .tool-card-desc {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      line-height: 1.4;
+    }
+
+    /* Sub Navigation Tabs inside DAST */
+    .tab-nav {
+      display: flex;
+      gap: 0.4rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    .tab-btn {
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--bg-subtle);
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Live Findings Stream Box in DAST */
+    .live-stream-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-top: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .live-stream-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .live-finding-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      animation: slideIn 0.25s ease-out;
+    }
+    .live-finding-row:last-child { border-bottom: none; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Console Feed */
+    .console-feed {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      max-height: 240px;
+      overflow-y: auto;
+      margin-top: 1rem;
+    }
+    .console-line { margin-bottom: 0.25rem; }
+    .console-line.success { color: #6cc79a; }
+    .console-line.info { color: #8db4e2; }
+    .console-line.warn { color: #fbbf24; }
+    .console-line.agent { color: #b8c3d1; font-weight: 600; }
+
+    /* Comparison Splitter for AI Decoy Triage */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .split-col {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .split-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+      align-items: center;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+    }
+    .badge-confirmed { background: var(--crimson-light); color: var(--crimson); border: 1px solid var(--crimson-border); }
+    .badge-runtime { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+    .badge-code { background: var(--sky-light); color: var(--sky); border: 1px solid var(--sky-border); }
+    .badge-suppressed { background: var(--emerald-light); color: var(--emerald); border: 1px solid var(--emerald-border); }
+    .badge-dpdp { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+    .badge-quantum { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+    .badge-vault { background: #fbfaf6; color: #8a6a2a; border: 1px solid #e6dcc6; }
+    .badge-agentic { background: #f4f6f9; color: #1f3b63; border: 1px solid #b8c3d1; box-shadow: 0 0 6px rgba(124, 58, 237, 0.2); }
+    .badge-tool { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+
+    /* Metrics Bar */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-box-title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 0.25rem;
+    }
+    .metric-box-num {
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+    }
+    .metric-box-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+    }
+
+    /* Table & Horizontal Scroll Container */
+    .table-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .table-toolbar {
+      padding: 0.85rem 1.25rem;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .filter-pill {
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--bg-subtle);
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .filter-pill.active {
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    /* Explicit Horizontal Scrollable Table Wrapper */
+    .table-scroll-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .table-scroll-container::-webkit-scrollbar { height: 8px; }
+    .table-scroll-container::-webkit-scrollbar-track { background: var(--bg-subtle); }
+    .table-scroll-container::-webkit-scrollbar-thumb { background: var(--border-focus); border-radius: 4px; }
+    .table-scroll-container::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+    table {
+      width: 100%;
+      min-width: 1100px;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th {
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    td.wrap-cell {
+      white-space: normal;
+      max-width: 260px;
+    }
+    tr:hover td { background: #f8fafc; }
+
+    /* Modal / Drawer */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-card {
+      background: var(--bg-surface);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 1120px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .code-box {
+      background: #0f172a;
+      color: #8db4e2;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .proof-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    .step-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid var(--sky);
+      border-radius: 6px;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.78rem;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .close-btn:hover { color: var(--text-main); }
+  </style>
+  <link rel="stylesheet" href="/static/intel.css">
+  <link rel="stylesheet" href="/static/enterprise.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand">
+      <img class="brand-logo" src="/static/vajralink-logo.svg" alt="VajraLink" width="164" height="40">
+      <div>
+        <div class="brand-title">Correlation Platform</div>
+        <div class="brand-subtitle">Static and runtime findings, linked to the line that causes them</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/api/export/sarif" class="btn btn-outline" download>SARIF 2.1.0</a>
+      <a href="/api/export/postman" class="btn btn-outline" download>Postman v2.1.0</a>
+      <button class="btn btn-outline" onclick="openVaultModal()">HashiCorp Vault Hub</button>
+      <button class="btn btn-outline" onclick="openQuantumModal()">NIST Quantum PQC</button>
+      <button class="btn btn-emerald" onclick="runCompletePipeline()">Fast-Run All</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main>
+    <!-- Interactive Stepper -->
+    <div class="stepper five">
+      <div id="stepCard1" class="step-card active" onclick="switchStep(1)">
+        <div class="step-number">1</div>
+        <div>
+          <div class="step-title">Target Codebase</div>
+          <div class="step-desc">Ingest repository & routes</div>
+        </div>
+      </div>
+      <div id="stepCard2" class="step-card" onclick="switchStep(2)">
+        <div class="step-number">2</div>
+        <div>
+          <div class="step-title">SAST & AI Triage</div>
+          <div class="step-desc">Multi-tool scan & noise filter</div>
+        </div>
+      </div>
+      <div id="stepCard3" class="step-card" onclick="switchStep(3)">
+        <div class="step-number">3</div>
+        <div>
+          <div class="step-title">Active DAST</div>
+          <div class="step-desc">Probes, Playwright & AI Agent</div>
+        </div>
+      </div>
+      <div id="stepCard4" class="step-card" onclick="switchStep(4); executeAnimatedCorrelation();">
+        <div class="step-number">4</div>
+        <div>
+          <div class="step-title">Correlation Graph</div>
+          <div class="step-desc">Prioritized exploit mapping</div>
+        </div>
+      </div>
+      <div id="stepCard5" class="step-card" onclick="switchStep(5); intelOnShow();">
+        <div class="step-number">5</div>
+        <div>
+          <div class="step-title">Graph and SBOM</div>
+          <div class="step-desc">Function graph, patterns, Bonus: reachability SCA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1 PANEL: Repository Ingestion -->
+    <div id="panel1" class="step-panel active">
+      <div class="card">
+        <div class="card-title">Target Repository & Codebase Ingestion</div>
+        <div class="card-desc">
+          Provide the Git repository or local source directory. Vajra-Link inspects the project, indexes declared Java Spring REST annotations, maps attack parameter seeds, and fingerprints architecture.
+        </div>
+
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Git Repository URL</label>
+            <input type="text" id="repoUrlInput" class="form-input" placeholder="https://github.com/owner/repo  (leave empty to use a local folder)" oninput="syncDestFromRepo()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Runtime Endpoint</label>
+            <input type="text" id="targetUrlInput" class="form-input" placeholder="http://127.0.0.1:PORT  (localhost / private network only)">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Local Codebase Destination
+            <a href="#" onclick="useBundledDemo(); return false;" class="vl-link" style="font-weight:500; margin-left:0.6rem; font-size:0.74rem;">Use bundled VulnerableApp demo</a>
+          </label>
+          <input type="text" id="destDirInput" class="form-input" oninput="this.dataset.manual='1'" placeholder="targets/<repo-name> (auto-filled from the URL)">
+        </div>
+
+        <div style="display:flex; gap:0.75rem; align-items:center;">
+          <button id="btnIngest" class="btn btn-emerald" onclick="ingestRepository()">
+            Ingest & Analyze Codebase
+          </button>
+          <button id="btnProceedStep2" class="btn btn-outline" style="display:none;" onclick="switchStep(2)">
+            Proceed to Step 2: SAST Scanning →
+          </button>
+        </div>
+
+        <div id="repoConsole" class="console-feed" style="display:none;"></div>
+
+        <!-- Discovered Endpoints Table Preview -->
+        <div id="repoRoutesPreview" style="display:none; margin-top:1.5rem;">
+          <div style="font-size:0.85rem; font-weight:700; margin-bottom:0.6rem; display:flex; justify-content:space-between; align-items:center;">
+            <span>Discovered Spring REST Routes & Attack Parameter Seeds (AST Route Mapper)</span>
+            <span id="routeCountBadge" class="badge badge-code">— Endpoints Mapped</span>
+          </div>
+          <div class="table-scroll-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Endpoint Pattern</th>
+                  <th>Controller / Class</th>
+                  <th>Parameter Seeds</th>
+                  <th>Variant Status</th>
+                </tr>
+              </thead>
+              <tbody id="routesTbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 PANEL: SAST Scanning & AI Decoy Triage -->
+    <div id="panel2" class="step-panel">
+      <div class="card">
+        <div class="card-title">Multi-Scanner SAST & AI Decoy Triage</div>
+        <div class="card-desc">
+          Executes a 4-tier static analysis pipeline combining <strong>Dynamic Semgrep Rules</strong>, <strong>Java/Python AST Taint Tracking</strong>, <strong>Sanitizer Inspection</strong>, and <strong>Secret Scanning</strong>, which suppresses safe decoys (parameterized queries, verified sanitizers) deterministically. Optionally send those suppressed decoys to the real <strong>OpenAI Decisions API (gpt-6-luna)</strong> as a predicate question for an independent second opinion (Bonus B-2) — billed on input tokens only, since a predicate answer is a probability, not generated text.
+        </div>
+
+        <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+          <button id="btnRunSast" class="btn btn-emerald" onclick="executeSastScan()">
+            Run Multi-Tool SAST Scan
+          </button>
+          <button id="btnAiDecoyTriage" class="btn btn-outline" onclick="runAiDecoyTriage()" disabled>
+            Get AI Second Opinion on Suppressed Decoys
+          </button>
+        </div>
+
+        <!-- SAST Progress Bar -->
+        <div id="sastProgressBox" class="progress-box">
+          <div class="progress-track">
+            <div id="sastProgressBar" class="progress-fill"></div>
+          </div>
+          <div class="progress-status">
+            <span id="sastProgressLabel">Executing Tool 1/4...</span>
+            <span id="sastProgressPct">0%</span>
+          </div>
+        </div>
+
+        <!-- Before vs After Split Comparison (Only shown dynamically after SAST or AI triage runs) -->
+        <div id="sastComparisonGrid" class="split-grid" style="display:none;">
+          <div class="split-col">
+            <div class="split-header">
+              <span>Raw SAST Sinks (before decoy suppression)</span>
+              <span id="rawSastBadge" class="badge badge-code">0 Found</span>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
+              Includes all static sink matches across controllers and services, including benign decoy variants (e.g. <code>Variant.SECURE</code>).
+            </p>
+          </div>
+          <div class="split-col" style="border-color:var(--emerald-border); background:var(--emerald-light);">
+            <div class="split-header">
+              <span style="color:var(--emerald);">Cleaned SAST (deterministic + optional AI second opinion)</span>
+              <span id="cleanedSastBadge" class="badge badge-suppressed">Pending Evaluation</span>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4;" id="jevVerdictText">
+              Decoys are suppressed deterministically (parameterized queries, verified sanitizers). Click <strong>"Get AI Second Opinion"</strong> to send them to the real OpenAI Decisions API and see its verdict and actual token cost.
+            </p>
+          </div>
+        </div>
+
+        <!-- Live Step-by-Step Tool Execution Console -->
+        <div id="sastConsole" class="console-feed" style="display:none;"></div>
+
+        <!-- AI Executive Summary Report Card -->
+        <div id="sastAiSummaryCard" class="ai-summary-card" style="display:none;">
+          <div class="ai-summary-title">
+            <span>SAST scan summary</span>
+            <span id="sastRecallBadge" class="cds-tag cds-tag--gray" style="margin-left:auto;">Ground-truth recall pending</span>
+          </div>
+          <div id="sastAiSummaryText" class="ai-summary-text">
+            Generating executive intelligence report...
+          </div>
+          <div id="sastToolsGrid" class="cds-tile-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Multi-engine attribution -->
+        <div id="engineAttributionCard" class="ai-summary-card" style="display:none; margin-top:1rem;"></div>
+
+        <!-- SAST Findings & AST Taint Flow Inspector Table -->
+        <div id="sastFindingsTableCard" style="display:none; margin-top:1.5rem;">
+          <div style="font-size:0.85rem; font-weight:700; margin-bottom:0.6rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <span class="cds-h3" style="margin:0">Code sinks</span>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <span id="sastFindingsCountBadge" class="badge badge-code">0 Sinks Mapped</span>
+              <select id="sastPageSizeSelect" class="form-input" style="padding:0.2rem 0.5rem; font-size:0.75rem; width:auto; border-radius:6px;" onchange="renderSastFindingsTable(sastRawData)">
+                <option value="all">Show All Sinks</option>
+                <option value="50" selected>Show 50</option>
+                <option value="15">Show 15</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Filter Pills for SAST Sinks -->
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+            <button id="sastPillAll" class="filter-pill active" onclick="setSastFilter('ALL')">All Sinks (0)</button>
+            <button id="sastPillActive" class="filter-pill" onclick="setSastFilter('ACTIVE')">Active Sinks (0)</button>
+            <button id="sastPillDecoy" class="filter-pill" onclick="setSastFilter('DECOY')">Safe Decoys (0)</button>
+            <button id="sastPillQuantum" class="filter-pill" style="border-color:#d3d9e3; color:#1f3b63;" onclick="setSastFilter('QUANTUM')">Cryptographic & PQC (&mdash;)</button>
+            <button id="sastPillVault" class="filter-pill" style="border-color:#e6dcc6; color:#6b4f1d;" onclick="setSastFilter('VAULT')">Vault Secrets (—)</button>
+          </div>
+
+          <div class="table-scroll-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Tool Origin Tag</th>
+                  <th>Canonical CWE</th>
+                  <th>Vulnerability Class</th>
+                  <th>Source File & Line</th>
+                  <th>Security Attribute</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="sastFindingsTbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Cohesive Features: HashiCorp Vault Secret Remediation & NIST Quantum PQC -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem; margin-top:1.5rem;">
+          <div style="background:#ffffff; border:1px solid #e6dcc6; border-radius:10px; padding:1.25rem; border-left: 4px solid #8a6a2a;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+              <span style="font-weight:700; font-size:0.9rem; color:#6b4f1d;">HashiCorp Vault Remediation Engine</span>
+              <span class="badge badge-vault" id="vaultCardBadge">RUN SAST</span>
+            </div>
+            <p id="vaultCardText" style="font-size:0.78rem; color:var(--text-muted); line-height:1.45; margin-bottom:0.85rem;">
+              Run SAST (Step 2) to build a migration plan from this repository's real hard-coded-secret findings. Each flagged line is triaged (real secret / already externalized / not a secret) and only real secrets are planned for <strong>HashiCorp Vault KV v2</strong>.
+            </p>
+            <button class="btn btn-outline" style="border-color:#8a6a2a; color:#6b4f1d; font-size:0.75rem;" onclick="openVaultModal()">
+              Launch Vault Secret Migration Hub
+            </button>
+          </div>
+
+          <div style="background:#ffffff; border:1px solid #d3d9e3; border-radius:10px; padding:1.25rem; border-left: 4px solid #1f3b63;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+              <span style="font-weight:700; font-size:0.9rem; color:#1f3b63;">NIST Post-Quantum Cryptography (PQC)</span>
+              <span id="pqcBadge" class="badge badge-quantum">NOT SCANNED</span>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.45; margin-bottom:0.85rem;">
+              Flags the cryptographic findings of <em>your</em> scan (weak hashes, RSA keys, weak ciphers; none until a scan has run) against the finalized <strong>NIST FIPS 203 (ML-KEM)</strong> and <strong>FIPS 204 (ML-DSA)</strong> standards to protect against <em>Store Now, Decrypt Later</em> attacks.
+            </p>
+            <button class="btn btn-outline" style="border-color:#1f3b63; color:#1f3b63; font-size:0.75rem;" onclick="openQuantumModal()">
+              Launch NIST PQC Transition Center
+            </button>
+          </div>
+        </div>
+
+        <!-- Proceed to Step 3 Button -->
+        <div style="margin-top:1.5rem; text-align:right;">
+          <button id="btnProceedStep3" class="btn btn-emerald" style="display:none;" onclick="switchStep(3)">
+            Continue to DAST
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 PANEL: Active DAST Pipeline & Exploit Verification -->
+    <div id="panel3" class="step-panel">
+      <div class="card">
+        <div class="card-title">Active DAST</div>
+        <div class="card-desc">
+          Sends live HTTP probes to the running app, verifies XSS in a headless browser and audits security headers. Every finding comes from a real response.
+        </div>
+
+        <div class="scope-card">
+          <div>Scan scope</div>
+          <label><input type="checkbox" id="dastGuided" checked>
+            <span><b>SAST-guided targeted DAST</b> (hand-off)<small>Probe only routes the function graph says can reach a flagged sink, using SAST's CWE hints to choose the probes.</small></span></label>
+          <label><input type="checkbox" id="dastIndependent">
+            <span><b>Also run independent DAST discovery</b><small>Probes every other route from the route map, plus a real <a href="https://github.com/projectdiscovery/katana" target="_blank" rel="noopener">katana</a> crawl of the live app's actual HTML/JS/forms (genuinely independent of the source tree, not just an unguided replay of it) — and the app's own endpoint catalog if it happens to publish one. Unchecked + guided unchecked = zero-knowledge baseline.</small></span></label>
+          <label><input type="checkbox" id="dastDecoy" checked>
+            <span><b>Decoy audit</b> (needs independent)<small>Re-probe routes SAST suppressed as safe; any that is exploitable is a SAST false-negative candidate.</small></span></label>
+          <label><input type="checkbox" id="dastPolicy" checked>
+            <span><b>Global transport &amp; header policy audit</b><small>CSP / X-Frame-Options / nosniff / CORS / cookies (Runtime-only findings).</small></span></label>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Session Cookie (optional — for apps that require login, e.g. WebGoat)</label>
+          <input type="text" id="sessionCookieInput" class="form-input" placeholder="JSESSIONID=abc123...  (log in yourself in a browser, copy the cookie value here)">
+          <small style="opacity:.7">The scanner is a separate backend process — it never sees your browser's session. Log in once in a real browser or curl, copy the resulting <code>Cookie</code> header value, and every probe this run will carry it so routes behind a login wall actually get exercised instead of just redirecting to /login.</small>
+        </div>
+        <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+          <button id="btnRunDast" class="btn btn-emerald" onclick="executeDastScan()">
+            Run DAST
+          </button>
+        </div>
+
+        <!-- DAST Live Status & Progress Bar -->
+        <div id="dastProgressBox" class="progress-box">
+          <div class="progress-track">
+            <div id="dastProgressBar" class="progress-fill"></div>
+          </div>
+          <div class="progress-status">
+            <span id="dastProgressLabel">Initializing DAST Probes...</span>
+            <span id="dastProgressPct">0%</span>
+          </div>
+        </div>
+
+        <div id="dastStatsCard" class="ai-summary-card" style="display:none; margin-top:1rem;"></div>
+
+        <!-- DAST Sub-Navigation Tabs -->
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchDastTab('soc', event)">Live console</button>
+          <button class="tab-btn" onclick="switchDastTab('playwright', event)">Browser proofs</button>
+          <button class="tab-btn" onclick="switchDastTab('katana', event)">Routes</button>
+          <button class="tab-btn" onclick="switchDastTab('postman', event)">Postman</button>
+        </div>
+
+        <!-- TAB 1: Live DAST Console & Confirmed Stream -->
+        <div id="dastTabSoc" class="tab-content active">
+          <!-- Live DAST Console -->
+          <div id="dastConsole" class="console-feed" style="display:none;"></div>
+
+          <!-- Live Streaming Confirmed Findings Feed -->
+          <div id="dastLiveStreamBox" class="live-stream-box" style="display:none;">
+            <div class="live-stream-header">
+              <span>Live Confirmed Findings Stream</span>
+              <span id="liveConfirmedCounter" class="badge badge-confirmed">0 live-verified</span>
+            </div>
+            <div id="liveStreamItems" style="max-height: 280px; overflow-y: auto;">
+              <!-- Live findings stream cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Playwright Headless DOM Screenshots -->
+        <div id="dastTabPlaywright" class="tab-content">
+          <div class="cds-subpanel">
+            <div class="cds-subpanel-head">
+              <span>Browser execution proofs</span>
+              <span class="badge badge-code" id="playwrightProofBadge">run DAST</span>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:1rem;">
+              For each XSS candidate route, Playwright opens headless Chromium, loads the URL with a canary payload, and evaluates <code>window.__vajra_xss</code>. Only when the JavaScript actually executed is a screenshot taken (with a red banner showing the real URL, parameter, payload and time). Playwright only tests XSS; SQLi, command injection and path traversal are proven by HTTP differential evidence (see the live feed and the curl replay).
+            </p>
+            <div id="playwrightProofs" style="font-size:0.8rem; color:var(--text-muted);">No DAST run yet in this session.</div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Route Crawl & Attack Surface -->
+        <div id="dastTabKatana" class="tab-content">
+          <div class="cds-subpanel">
+            <div class="cds-subpanel-head">
+              <span>Routes and attack surface</span>
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <input type="text" id="katanaSearchInput" class="form-input" style="padding:0.25rem 0.6rem; font-size:0.75rem; width:220px;" placeholder="Filter endpoints..." oninput="filterKatanaStream()">
+                <span class="badge badge-code" id="katanaEndpointsBadge">Loading…</span>
+              </div>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.6rem;">
+              The real route map extracted in Step 1 (Spring/Servlet/Flask/FastAPI/Django AST parsing), as returned live by <code>/api/routes</code>. When "independent DAST discovery" is enabled in Step 3, this is also where a real <a href="https://github.com/projectdiscovery/katana" target="_blank" rel="noopener">katana</a> crawl of the running app's HTML/JS/forms adds any endpoint the source-based route map didn't have — katana is optional and auto-detected; the DAST stats panel says plainly if it isn't installed.
+            </p>
+            <div id="katanaLogStream" class="console-feed" style="max-height: 240px; margin-top:0;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: Postman Collection Runner -->
+        <div id="dastTabPostman" class="tab-content">
+          <div class="cds-subpanel">
+            <div class="cds-subpanel-head">
+              <span>Postman collection</span>
+              <a id="postmanExportLink" href="/api/export/postman" class="btn btn-outline" download style="padding:0.25rem 0.6rem; font-size:0.75rem; display:none;">Export Postman JSON</a>
+            </div>
+            <div id="postmanEmpty" style="font-size:0.8rem; color:var(--text-muted);">Run the DAST probes (Step 3) first. The collection is built from the findings they produce.</div>
+            <div id="postmanBody" style="display:none;">
+              <div style="margin-bottom:0.85rem;">
+                <label class="form-label">Select a request from the exported collection:</label>
+                <select id="postmanProbeSelect" class="form-input" style="font-weight:600; font-size:0.8rem;" onchange="renderSelectedPostmanProbe()"></select>
+              </div>
+              <div class="cds-label">cURL replay command</div>
+              <div id="postmanCurlPreview" class="code-box" style="color:#6cc79a; font-size:0.75rem; margin-bottom:0.75rem;"></div>
+              <div class="cds-label">Postman test script</div>
+              <div id="postmanScriptPreview" class="code-box" style="margin-bottom:0.85rem; color:#b8c3d1; font-size:0.75rem; white-space:pre-wrap;"></div>
+              <div id="postmanCountLine" style="font-size:0.78rem; color:var(--emerald); font-weight:600;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proceed to Step 4 Button -->
+        <div style="margin-top:1.5rem; text-align:right;">
+          <button id="btnProceedStep4" class="btn btn-emerald" style="display:none;" onclick="switchStep(4); executeAnimatedCorrelation();">
+            Continue to correlation
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 PANEL: 5-Vector Correlation Graph & Issues Table -->
+    <div id="panel4" class="step-panel">
+      <!-- How a link is scored (Carbon structured list) -->
+      <div class="card cds-page-section">
+        <div class="cds-section-head">
+          <div>
+            <h3 class="cds-h3">How a link is scored</h3>
+            <p class="cds-body">Every DAST proof is scored against the SAST sinks its handler can reach. A link with a proven code path and a score of 0.72 or more is confirmed deterministically. Scores from 0.48 to 0.72 go to the grey-zone arbiter; without a proven path a link is capped at 0.70 (thresholds from <code>vajra/correlation/engine.py</code>).</p>
+          </div>
+          <code class="cds-formula">S = 0.30&middot;call graph + 0.25&middot;CWE + 0.15&middot;parameter + 0.15&middot;sink behaviour + 0.15&middot;defence parity</code>
+        </div>
+        <table class="cds-legend cds-structured">
+          <thead><tr><th style="width:26%">Vector</th><th class="r" style="width:8%">Weight</th><th>What it checks</th></tr></thead>
+          <tbody>
+            <tr><td>Inter-procedural call graph</td><td class="r cds-num">30%</td><td>The handler reaches the sink directly, through a helper, or through an <code>@Service</code> it calls.</td></tr>
+            <tr><td>CWE taxonomy bridge</td><td class="r cds-num">25%</td><td>Code-level and runtime CWEs describe the same weakness (CWE-77/78, CWE-23/22, CWE-564/89).</td></tr>
+            <tr><td>Parameter lineage</td><td class="r cds-num">15%</td><td>The attacked HTTP parameter is an input the handler actually reads.</td></tr>
+            <tr><td>Sink behaviour</td><td class="r cds-num">15%</td><td>The runtime evidence fits the sink API, for example a database error for a SQL call.</td></tr>
+            <tr><td>Defence parity and arbiter</td><td class="r cds-num">15%</td><td>Guards found in code match the runtime result; grey-zone pairs go to the gpt-4o-mini arbiter, or to a strict rule without a key.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5-Vector Live Correlation Runner -->
+      <div class="card cds-page-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem;">
+          <div>
+            <h3 class="cds-h3">Correlation run</h3>
+            <p class="cds-body">Links every DAST proof to the code that causes it, merges duplicates and ranks the result.</p>
+          </div>
+          <button id="btnRunCorrelation" class="btn btn-emerald" onclick="executeAnimatedCorrelation()">
+            Run correlation
+          </button>
+        </div>
+
+        <!-- Progress Box -->
+        <div id="corrProgressBox" class="progress-box" style="display:none; margin-top:0.75rem; margin-bottom:0.5rem;">
+          <div class="progress-track">
+            <div id="corrProgressBar" class="progress-fill"></div>
+          </div>
+          <div class="progress-status">
+            <span id="corrProgressLabel">Computing Vector 1/5...</span>
+            <span id="corrProgressPct">0%</span>
+          </div>
+        </div>
+
+        <!-- Correlation Live Computation Feed -->
+        <div id="corrConsole" class="console-feed" style="display:none; max-height:140px; margin-top:0.6rem;"></div>
+      </div>
+
+      <!-- Metrics Bar -->
+      <div class="metrics-row">
+        <div class="metric-box" style="cursor:pointer;" onclick="setFilter('CONFIRMED')">
+          <div class="metric-box-title"><span class="cds-swatch" style="background:#da1e28"></span>Confirmed</div>
+          <div class="metric-box-num" id="mConfirmed">&mdash;</div>
+          <div class="metric-box-sub">Proven at runtime and linked to code</div>
+        </div>
+        <div class="metric-box" style="cursor:pointer;" onclick="setFilter('RUNTIME')">
+          <div class="metric-box-title"><span class="cds-swatch" style="background:#f1c21b"></span>Runtime only</div>
+          <div class="metric-box-num" id="mRuntime">&mdash;</div>
+          <div class="metric-box-sub">Seen at runtime, no code location</div>
+        </div>
+        <div class="metric-box" style="cursor:pointer;" onclick="setFilter('CODE')">
+          <div class="metric-box-title"><span class="cds-swatch" style="background:#0f62fe"></span>Code only</div>
+          <div class="metric-box-num" id="mCode">&mdash;</div>
+          <div class="metric-box-sub">Found in code, not proven reachable</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-box-title"><span class="cds-swatch" style="background:#24a148"></span>Suppressed decoys</div>
+          <div class="metric-box-num" id="mSuppressed">&mdash;</div>
+          <div class="metric-box-sub">Guarded code removed by SAST (B-2)</div>
+        </div>
+      </div>
+
+      <!-- Issues Table Card with Horizontal Scroll -->
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="filter-pills">
+            <button class="filter-pill active" id="pillAll" onclick="setFilter('ALL', event)">All Issues (&mdash;)</button>
+            <button class="filter-pill" id="pillConfirmed" onclick="setFilter('CONFIRMED', event)">Confirmed (&mdash;)</button>
+            <button class="filter-pill" id="pillRuntime" onclick="setFilter('RUNTIME', event)">Runtime Only (&mdash;)</button>
+            <button class="filter-pill" id="pillCode" onclick="setFilter('CODE', event)">Code Only (&mdash;)</button>
+            <button class="filter-pill" id="pillVault" onclick="setFilter('VAULT', event)">Vault Secrets (—)</button>
+            <button class="filter-pill" id="pillQuantum" onclick="setFilter('QUANTUM', event)">Quantum Weak (&mdash;)</button>
+            <button class="filter-pill" id="pillAgentic" onclick="setFilter('AGENTIC', event)">Agentic AI (&mdash;)</button>
+            <button class="filter-pill" id="pillDpdp" onclick="setFilter('DPDP', event)">DPDP PII (&mdash;)</button>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <select id="corrPageSizeSelect" class="form-input" style="width:auto; padding:0.35rem 0.6rem; font-size:0.75rem; border-radius:6px;" onchange="renderTable()">
+              <option value="all">Show All Issues</option>
+              <option value="50">Show 50</option>
+              <option value="25" selected>Show 25</option>
+              <option value="15">Show 15</option>
+            </select>
+            <input type="text" id="searchBox" class="form-input" style="width:230px; padding:0.35rem 0.65rem;" placeholder="Filter by CWE, file, endpoint..." oninput="filterTable()">
+          </div>
+        </div>
+
+        <!-- Scrollable Table Container -->
+        <div class="table-scroll-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Status</th>
+                <th>Canonical CWE</th>
+                <th>Vulnerability Title</th>
+                <th>Tool Origin Tag</th>
+                <th>Source Sink (SAST)</th>
+                <th>Runtime Endpoint (DAST)</th>
+                <th>Risk Score</th>
+                <th>Differentiators</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="issuesTbody">
+              <tr>
+                <td colspan="10" style="text-align:center; padding: 2.5rem; color: var(--text-dim);">
+                  Execute Steps 1–3 or click "Fast-Run All" to display correlated intelligence.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- STEP 5 PANEL: Intelligence (function graph, attack patterns, reachability SCA) -->
+    <div id="panel5" class="step-panel">
+      <div class="card">
+        <div class="card-title">Graph, patterns and SBOM</div>
+        <div class="tab-nav">
+          <button class="tab-btn intel-tabbtn active" data-tab="graph" onclick="intelSwitch('graph')">Function graph</button>
+          <button class="tab-btn intel-tabbtn" data-tab="patterns" onclick="intelSwitch('patterns')">Attack patterns</button>
+          <button class="tab-btn intel-tabbtn" data-tab="sbom" onclick="intelSwitch('sbom')">SBOM and reachability</button>
+        </div>
+        <div id="intelGraph" class="intel-tab active"></div>
+        <div id="intelPatterns" class="intel-tab"></div>
+        <div id="intelSbom" class="intel-tab"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Inspection Modal Drawer -->
+  <div id="inspectModal" class="modal-backdrop" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <span id="mStatusBadge" class="badge">CONFIRMED</span>
+          <span id="mCweBadge" class="badge" style="background:var(--bg-subtle); color:var(--text-main); margin-left:0.4rem;">CWE-89</span>
+          <span id="mToolBadge" class="badge badge-tool" style="margin-left:0.4rem;">Custom Java AST Taint Engine</span>
+          <span id="mAgenticBadge" class="badge badge-agentic" style="display:none; margin-left:0.4rem;">Agentic AI Evasion Payload</span>
+          <h2 id="mTitle" style="font-size:1.1rem; font-weight:700; margin-top:0.35rem;">SQL Injection</h2>
+        </div>
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Left Column: SAST Code Context & Thinking -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.4rem;">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px;">
+              Source Code Sink Context
+            </div>
+            <span id="mFunctionBadge" class="badge" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; font-family:'JetBrains Mono'; font-size:0.7rem; display:none;">
+              fn: handler()
+            </span>
+          </div>
+          <div id="mFilePath" style="font-size:0.8rem; color:var(--sky); font-family:'JetBrains Mono'; margin-bottom:0.5rem;">
+            src/main/java/...:83
+          </div>
+          <div id="mCodeSnippet" class="code-box">
+            // Source snippet
+          </div>
+
+          <!-- AST Step-by-Step Taint Flow & Thinking -->
+          <div style="margin-top:1rem;">
+            <div id="mFlowHeading" style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:0.4rem;">
+              Dynamic AST Taint &amp; Call-Graph Trace:
+            </div>
+            <div class="step-box" id="mStepSource">
+              <strong>1. Input Source:</strong> @RequestParam String id binding in controller.
+            </div>
+            <div class="step-box" id="mStepProp">
+              <strong>2. Call-Graph / Propagation:</strong> Parameter concatenated into dynamic SQL query string.
+            </div>
+            <div class="step-box" id="mStepSink">
+              <strong>3. Dangerous Sink:</strong> Statement.executeQuery() invoked directly.
+            </div>
+            <div class="step-box" id="mStepDefense">
+              <strong>4. Guard Evaluation:</strong> No PreparedStatement '?' placeholders or sanitizers found.
+            </div>
+            <div class="step-box" style="border-left-color:var(--emerald);" id="mStepFix">
+              <strong>5. Remediation:</strong> Use parameterized PreparedStatement queries with '?' placeholders.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Runtime Exploit Proof, 5-Vector Matrix & Live Postman Runner -->
+        <div>
+          <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:0.4rem;">
+            Runtime Exploit Proof &amp; Replay (DAST)
+          </div>
+          <div style="font-size:0.8rem; margin-bottom:0.35rem;">
+            <strong>Primary Endpoint:</strong> <code id="mUrl" style="color:var(--amber);">http://...</code>
+          </div>
+          <div style="font-size:0.8rem; margin-bottom:0.35rem;">
+            <strong>Matched Parameter:</strong> <code id="mParam" style="color:var(--sky);">id</code>
+            <span style="margin-left:0.6rem;"><strong>Payload:</strong> <code id="mPayload" style="color:var(--crimson);">1' OR '1'='1</code></span>
+          </div>
+          <div id="mEvidence" class="proof-box" style="margin-bottom:0.85rem;">
+            Differential HTTP response verified exploitability.
+          </div>
+
+          <!-- 5-Vector Neuro-Symbolic Correlation Proof Matrix -->
+          <div id="mVectorMatrix" style="margin-bottom:0.85rem; padding:0.75rem; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px;">
+            <!-- Populated dynamically from issue.vector_breakdown -->
+          </div>
+
+          <!-- Playwright Screenshot Proof Box (Visible only when runtime visual proof applies) -->
+          <div id="mScreenshotBox" style="display:none; margin-bottom:0.85rem; border:1px solid var(--border); border-radius:8px; padding:0.6rem; background:#ffffff;">
+            <div id="mScreenshotTitle" style="font-size:0.75rem; font-weight:700; color:var(--emerald); margin-bottom:0.4rem;">
+              Playwright Headless Browser Screenshot Proof:
+            </div>
+            <img id="mScreenshotImg" src="" alt="Playwright DOM Execution Proof" style="width:100%; border-radius:6px; border:1px solid var(--border);">
+          </div>
+
+          <!-- Postman Assertion Script, cURL Replay & Live Verification Button -->
+          <div id="mReplaySection" style="margin-bottom:0.85rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.45rem;">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px;">
+                Live Postman &amp; cURL Exploit Verifier:
+              </div>
+              <div style="display:flex; gap:0.4rem; align-items:center;">
+                <button id="btnCopyModalCurl" class="btn btn-outline" style="padding:0.28rem 0.6rem; font-size:0.73rem;" onclick="copyModalCurl()">
+                  Copy cURL
+                </button>
+                <button id="btnLivePostmanVerify" class="btn btn-emerald" style="padding:0.28rem 0.7rem; font-size:0.73rem;" onclick="runLivePostmanVerification()">
+                  Verify Exploit Live (Postman Runner)
+                </button>
+              </div>
+            </div>
+            <div id="mCurlBox" class="code-box" style="color:#6cc79a; font-size:0.74rem; margin-bottom:0.4rem; word-break:break-all;">
+              curl -i "http://..."
+            </div>
+            <div id="mPostmanScriptBox" class="code-box" style="color:#b8c3d1; font-size:0.74rem;">
+              // pm.test(...)
+            </div>
+
+            <!-- Live Real-Time Postman Execution Logs & HTTP Response Drawer -->
+            <div id="mLivePostmanConsole" style="display:none; margin-top:0.55rem; border:1px solid #cbd5e1; border-radius:8px; background:#ffffff; overflow:hidden;">
+              <!-- Populated live by POST /api/verify/live -->
+            </div>
+          </div>
+
+          <div id="mExplain" style="font-size:0.76rem; padding:0.65rem 0.75rem; background:#f8fafc; border:1px solid #e2e8f0; color:#334155; border-radius:6px; margin-bottom:0.85rem;">
+            Why linked (B-3): 5-vector correlation trace.
+          </div>
+          <div id="mCompliance">
+            <!-- DPDP / Quantum / Vault alerts -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: HashiCorp Vault Secret Management Hub -->
+  <div id="vaultModal" class="modal-backdrop" onclick="closeVaultModal(event)">
+    <div class="modal-card" style="max-width:920px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-vault">SECURITY DIFFERENTIATOR</span>
+          <h2 style="font-size:1.1rem; font-weight:700; margin-top:0.35rem;">HashiCorp Vault Secret Management & Migration Hub</h2>
+        </div>
+        <button class="close-btn" onclick="closeVaultModal()">✕</button>
+      </div>
+      <div style="padding:1.5rem; overflow-y:auto;">
+        <div id="vaultModalBody" style="font-size:0.82rem; color:var(--text-muted);">Building migration plan from the current SAST run…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NIST Post-Quantum Cryptography (PQC) Transition Center -->
+  <div id="quantumModal" class="modal-backdrop" onclick="closeQuantumModal(event)">
+    <div class="modal-card" style="max-width:920px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-quantum">QUANTUM READINESS</span>
+          <h2 style="font-size:1.1rem; font-weight:700; margin-top:0.35rem;">NIST Post-Quantum Cryptography (PQC) Transition Center</h2>
+        </div>
+        <button class="close-btn" onclick="closeQuantumModal()">✕</button>
+      </div>
+      <div style="padding:1.5rem; overflow-y:auto;">
+        <div style="font-size:0.82rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+          Vajra-Link audits source code and runtime handshakes against the finalized <strong>NIST Post-Quantum Cryptography Standards (NIST FIPS 203 & FIPS 204)</strong>. Adversaries execute <em>"Store Now, Decrypt Later" (SNDL)</em> attacks to intercept encrypted traffic today for decryption once quantum hardware matures.
+        </div>
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.5rem;">
+            12 Quantum-Vulnerable Assets Flagged in Target Application:
+          </div>
+          <div id="pqcAssetsList" style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
+            <!-- Populated via API -->
+          </div>
+        </div>
+        <div style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem;">
+          Java 17 / BouncyCastle PQC Migration Blueprint (FIPS 203 ML-KEM & FIPS 204 ML-DSA):
+        </div>
+        <div class="code-box" id="pqcCodeBox" style="max-height:220px; color:#b8c3d1;">
+// BouncyCastle Post-Quantum Cryptography (Java 17)
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+Security.addProvider(new BouncyCastlePQCProvider());
+
+// Replace RSA KeyPairGenerator with NIST FIPS 203 ML-KEM
+KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM-768", "BCPQC");
+KeyPair mlKemPair = kpg.generateKeyPair();
+
+// Replace RSA Digital Signatures with NIST FIPS 204 ML-DSA
+Signature sig = Signature.getInstance("ML-DSA-65", "BCPQC");
+sig.initSign(mlKemPair.getPrivate());
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="vl-footer"><span>VajraLink &middot; SAST + DAST correlation</span><span>Scans run only against local or private-network targets</span></footer>
+  <script src="/static/intel.js"></script>
+  <script>
+    let issuesData = [];
+    let sastRawData = [];
+    let activeFilter = 'ALL';
+
+    function switchStep(stepNum) {
+      document.querySelectorAll('.step-card').forEach((c, idx) => {
+        c.classList.toggle('active', idx + 1 === stepNum);
+      });
+      document.querySelectorAll('.step-panel').forEach((p, idx) => {
+        p.classList.toggle('active', idx + 1 === stepNum);
+      });
+    }
+
+    function switchDastTab(tabKey, e) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      if (tabKey === 'soc') document.getElementById('dastTabSoc').classList.add('active');
+      if (tabKey === 'playwright') document.getElementById('dastTabPlaywright').classList.add('active');
+      if (tabKey === 'katana') {
+        document.getElementById('dastTabKatana').classList.add('active');
+        loadKatanaLogs();
+      }
+      if (tabKey === 'postman') {
+        document.getElementById('dastTabPostman').classList.add('active');
+        loadPostmanPanel();
+      }
+    }
+
+    // Dynamic Katana Crawler Log Stream
+    let allKatanaRoutes = [];
+    async function loadKatanaLogs() {
+      const stream = document.getElementById('katanaLogStream');
+      if (!stream) return;
+      if (allKatanaRoutes.length) {
+        renderKatanaLogsHtml(allKatanaRoutes);
+        return;
+      }
+      stream.innerHTML = '<div class="console-line info">[Routes] Fetching the route map extracted in Step 1...</div>';
+      try {
+        const res = await fetch('/api/routes');
+        const data = await res.json();
+        allKatanaRoutes = data.routes || [];
+        renderKatanaLogsHtml(allKatanaRoutes);
+      } catch (e) {
+        stream.innerHTML = '<div class="console-line warn">Failed to load the route map.</div>';
+      }
+    }
+
+    function renderKatanaLogsHtml(routes) {
+      const stream = document.getElementById('katanaLogStream');
+      const q = (document.getElementById('katanaSearchInput')?.value || '').toLowerCase();
+      const filtered = routes.filter(r => !q || `${r.http_method} ${r.url_pattern} ${(r.params||[]).join(' ')}`.toLowerCase().includes(q));
+
+      const badge = document.getElementById('katanaEndpointsBadge');
+      if (badge) badge.textContent = `${filtered.length} Endpoints Mapped`;
+
+      const families = new Set(routes.map(r => r.vulnerability_type_tag).filter(Boolean)).size;
+      let html = `
+        <div class="console-line info">[Routes] ${routes.length} total endpoints mapped${families ? `, ${families} distinct vulnerability-class tags` : ''} (source: the route extractor run in Step 1, not a live crawl).</div>
+      `;
+      html += filtered.slice(0, 35).map(r => {
+        const tag = r.is_secure_variant ? 'SECURE_VARIANT (static tag)' : (r.vulnerability_type_tag || 'route');
+        const params = (r.params || []).join(', ') || 'none detected';
+        const depth = (r.url_pattern.match(/\//g) || []).length;
+        return `<div class="console-line success">[path depth ${depth}] [${r.http_method}] ${r.url_pattern} | params: [${params}] -> ${tag}</div>`;
+      }).join('');
+      if (filtered.length > 35) {
+        html += `<div class="console-line info">... and ${filtered.length - 35} more endpoints in the route map.</div>`;
+      }
+      stream.innerHTML = html;
+    }
+
+    function filterKatanaStream() {
+      renderKatanaLogsHtml(allKatanaRoutes);
+    }
+
+    // Postman panel: rendered from the real /api/export/postman collection (one item per finding with a URL).
+    // Empty state until a DAST run has produced findings.
+    let postmanItems = [];
+    async function loadPostmanPanel() {
+      const empty = document.getElementById('postmanEmpty'), body = document.getElementById('postmanBody'), link = document.getElementById('postmanExportLink');
+      try {
+        const col = await (await fetch('/api/export/postman')).json();
+        postmanItems = Array.isArray(col.item) ? col.item : [];
+      } catch (e) { postmanItems = []; }
+      if (!postmanItems.length) { empty.style.display = 'block'; body.style.display = 'none'; link.style.display = 'none'; return; }
+      empty.style.display = 'none'; body.style.display = 'block'; link.style.display = 'inline-flex';
+      const sel = document.getElementById('postmanProbeSelect');
+      sel.innerHTML = postmanItems.map((it, i) => `<option value="${i}">${escapeHtmlSafe(`${i + 1}. ${it.name}`)}</option>`).join('');
+      document.getElementById('postmanCountLine').textContent = `${postmanItems.length} request(s) in the exported collection, one per finding with a URL from the current scan.`;
+      renderSelectedPostmanProbe();
+    }
+
+    function renderSelectedPostmanProbe() {
+      const it = postmanItems[parseInt(document.getElementById('postmanProbeSelect')?.value || '0', 10)];
+      const cBox = document.getElementById('postmanCurlPreview'), sBox = document.getElementById('postmanScriptPreview');
+      if (!it || !cBox || !sBox) return;
+      const rq = it.request || {};
+      cBox.textContent = `curl -i -X ${rq.method || 'GET'} "${(rq.url && rq.url.raw) || ''}"`;
+      const ev = (it.event || [])[0];
+      sBox.textContent = ev && ev.script && ev.script.exec ? ev.script.exec.join('\n') : '(no script)';
+    }
+
+    // 5-Vector Animated Correlation Stepper
+    async function executeAnimatedCorrelation() {
+      const btn = document.getElementById('btnRunCorrelation');
+      const pBox = document.getElementById('corrProgressBox');
+      const bar = document.getElementById('corrProgressBar');
+      const lbl = document.getElementById('corrProgressLabel');
+      const pct = document.getElementById('corrProgressPct');
+      const consoleBox = document.getElementById('corrConsole');
+
+      if (btn) {
+        btn.textContent = 'Running correlation…';
+        btn.disabled = true;
+      }
+      pBox.style.display = 'block';
+      consoleBox.style.display = 'block';
+      consoleBox.innerHTML = '';
+
+      lbl.textContent = 'Linking every DAST proof to the code that causes it (route map + call graph + 5 evidence vectors)...';
+      pct.textContent = '';
+      bar.style.width = '35%';
+      const t0 = performance.now();
+      try {
+        const corrData = await executeCorrelation();
+        bar.style.width = '100%';
+        lbl.textContent = `Done in ${((performance.now() - t0) / 1000).toFixed(1)}s`;
+        const line = (cls, txt) => { consoleBox.innerHTML += `<div class="console-line ${cls}">${escapeHtmlSafe(txt)}</div>`; };
+        if (corrData) {
+          const r = corrData.correlation_report || {};
+          line('info', `${r.dast_findings ?? '?'} DAST proofs x ${r.sast_sinks ?? '?'} SAST sinks -> ${r.pairs_scored ?? 0} same-weakness pairs scored`);
+          line('info', `${r.auto_confirmed ?? 0} linked by a proven code path (route handler encloses or calls the sink), no LLM needed`);
+          line('info', `${r.arbiter_calls ?? 0} uncertain pairs sent to the grey-zone arbiter: ${r.arbiter_linked ?? 0} linked, ${r.arbiter_rejected ?? 0} kept separate`);
+          line('info', `${r.merged_into_existing_sink ?? 0} extra URLs merged into a sink already proven (same bug reached from several URLs)`);
+          if ((r.contested || []).length) {
+            line('warn', `${r.contested.length} runtime hit(s) on code SAST proved safe, with only inference evidence - not reported:`);
+            r.contested.forEach(c => line('warn', `   ${c.url} -> ${c.sast_verdict}`));
+          }
+          if (r.suppression_overridden) line('warn', `${r.suppression_overridden} SAST "safe" verdict(s) overridden by a direct runtime artifact`);
+          if ((r.secret_noise_dropped || []).length) line('info', `${r.secret_noise_dropped.length} hard-coded-secret hits dropped after reading the real line (UI text, \${ENV} placeholders, PEM markers)`);
+          line('success', `✓ ${corrData.confirmed_count} Confirmed, ${corrData.runtime_only_count} Runtime only, ${corrData.code_only_count} Code only (${corrData.total_issues} issues, one per bug), ${corrData.suppressed_decoys} safe decoys suppressed`);
+        } else {
+          line('success', '✓ Issues categorized and prioritized.');
+        }
+      } catch (e) {
+        consoleBox.innerHTML += `<div class="console-line warn">Error during correlation: ${e}</div>`;
+      } finally {
+        if (btn) {
+          btn.textContent = 'Run correlation again';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
+    // STEP 1: Repository Ingestion
+    // -------------------------------------------------------------
+    // Destination folder follows the repo name unless the user typed their own path.
+    function syncDestFromRepo() {
+      const destEl = document.getElementById('destDirInput');
+      if (!destEl || destEl.dataset.manual === '1') return;
+      const url = document.getElementById('repoUrlInput').value.trim().replace(/\/+$/, '').replace(/\.git$/, '');
+      const name = url.split(/[\/:]/).pop().replace(/[^A-Za-z0-9._-]/g, '_');
+      destEl.value = name ? `targets/${name}` : '';
+    }
+
+    async function ingestRepository() {
+      const btn = document.getElementById('btnIngest');
+      const consoleBox = document.getElementById('repoConsole');
+      const previewBox = document.getElementById('repoRoutesPreview');
+      const tbody = document.getElementById('routesTbody');
+      const proceedBtn = document.getElementById('btnProceedStep2');
+
+      btn.textContent = 'Downloading and analysing…';
+      btn.disabled = true;
+      proceedBtn.style.display = 'none';
+      consoleBox.style.display = 'block';
+      const repoUrl = document.getElementById('repoUrlInput').value.trim();
+      const destDir = document.getElementById('destDirInput').value.trim();
+      consoleBox.innerHTML = `<div class="console-line info">[1/2] ${repoUrl ? `Cloning ${escapeHtmlSafe(repoUrl)} into ${escapeHtmlSafe(destDir || '(auto)')}` : `Reading local folder ${escapeHtmlSafe(destDir)}`} ...</div>`;
+
+      try {
+        const res = await fetch('/api/repo/clone', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({repo_url: repoUrl || null, dest_dir: destDir || null})
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          consoleBox.innerHTML += `<div class="console-line warn">${escapeHtmlSafe(data.detail || ('HTTP ' + res.status))}</div>`;
+          document.getElementById('stepCard1').classList.remove('completed');
+          return;
+        }
+
+        (data.logs || []).forEach(l => {
+          consoleBox.innerHTML += `<div class="console-line info">${escapeHtmlSafe(l)}</div>`;
+        });
+        // The backend may have redirected a conflicting destination to a fresh sibling folder
+        // (e.g. targets/Foo-2) so the clone always succeeds — keep the field in sync with reality,
+        // so Step 2/3/4 scan the exact folder that was actually downloaded.
+        if (data.source_path && data.source_path !== destDir) {
+          document.getElementById('destDirInput').value = data.source_path;
+          document.getElementById('destDirInput').dataset.manual = '1';
+          consoleBox.innerHTML += `<div class="console-line info">[Destination] Using ${escapeHtmlSafe(data.source_path)} for all later stages.</div>`;
+        }
+        const langs = (data.languages && data.languages.length) ? data.languages.join(', ') : 'no known language detected';
+        const builds = (data.build_files && data.build_files.length) ? ` · build: ${data.build_files.join(', ')}` : '';
+        consoleBox.innerHTML += `<div class="console-line success">✓ Source at ${escapeHtmlSafe(data.path)} — ${escapeHtmlSafe(langs)} (${data.files_count} files${builds})</div>`;
+        consoleBox.innerHTML += `<div class="console-line success">✓ Extracted ${data.routes_count} declared Spring REST endpoints & parameter seeds</div>`;
+        consoleBox.innerHTML += `<div class="console-line info">[Ready] Step 2 will scan this exact path with every SAST engine.</div>`;
+
+        // Render preview routes (only as many as the API actually returned — never padded or guessed)
+        if (data.routes && data.routes.length) {
+          previewBox.style.display = 'block';
+          const shown = data.routes.length;
+          const truncNote = data.routes_count > shown ? ` (showing first ${shown})` : '';
+          document.getElementById('routeCountBadge').textContent = `${data.routes_count} Endpoints Mapped${truncNote}`;
+          tbody.innerHTML = data.routes.map(r => `
+            <tr>
+              <td><span class="badge ${r.http_method === 'POST' ? 'badge-confirmed' : 'badge-code'}">${escapeHtmlSafe(r.http_method || '')}</span></td>
+              <td><code>${escapeHtmlSafe(r.url_pattern || '')}</code></td>
+              <td><code>${escapeHtmlSafe(r.controller_class || '')}</code></td>
+              <td><code>${(r.params && r.params.length) ? escapeHtmlSafe(r.params.join(', ')) : '<span style="opacity:.55">(none declared)</span>'}</code></td>
+              <td>
+                <span class="badge ${r.is_secure_variant ? 'badge-suppressed' : 'badge-confirmed'}">
+                  ${r.is_secure_variant ? 'SECURE_DECOY' : 'VULNERABLE'}
+                </span>
+              </td>
+            </tr>
+          `).join('');
+        } else if (data.routes_count === 0) {
+          previewBox.style.display = 'block';
+          document.getElementById('routeCountBadge').textContent = '0 Endpoints Mapped';
+          tbody.innerHTML = `<tr><td colspan="5" style="opacity:.7">No Spring REST routes were detected in this source tree (no @RequestMapping/@*Mapping handlers found).</td></tr>`;
+        }
+
+        document.getElementById('stepCard1').classList.add('completed');
+        proceedBtn.style.display = 'inline-flex';
+      } catch (e) {
+        consoleBox.innerHTML += `<div class="console-line warn">Error: ${e}</div>`;
+      } finally {
+        btn.textContent = 'Ingest & Analyze Codebase';
+        btn.disabled = false;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // STEP 2: SAST Scanning & AI Decoy Triage
+    // -------------------------------------------------------------
+    async function executeSastScan() {
+      const btn = document.getElementById('btnRunSast');
+      const consoleBox = document.getElementById('sastConsole');
+      const progressBox = document.getElementById('sastProgressBox');
+      const bar = document.getElementById('sastProgressBar');
+      const label = document.getElementById('sastProgressLabel');
+      const pct = document.getElementById('sastProgressPct');
+
+      btn.textContent = 'Running SAST…';
+      btn.disabled = true;
+      consoleBox.style.display = 'block';
+      consoleBox.innerHTML = '<div class="console-line info">[SAST] Running engines independently, then merging by sink...</div>';
+      progressBox.style.display = 'block';
+      label.textContent = 'Running AST taint, sink-signature, semgrep and secret engines...';
+      pct.textContent = '…';
+      bar.style.width = '60%';
+
+      try {
+        const res = await fetch('/api/sast/run', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({source_path: document.getElementById('destDirInput').value})
+        });
+        const data = await res.json();
+        sastRawData = data.findings || [];
+        if (typeof data.suppressed_count === 'number') lastSuppressedCount = data.suppressed_count;
+        refreshVaultCard();
+        bar.style.width = '100%'; pct.textContent = '100%'; label.textContent = 'Merge complete';
+
+        (data.step_logs || []).forEach(sl => {
+          const cls = (sl.status === 'COMPLETED') ? 'info' : 'warn';
+          consoleBox.innerHTML += `<div class="console-line ${cls}">[${sl.tool}] ${sl.detail}</div>`;
+        });
+        consoleBox.innerHTML += `<div class="console-line success">✓ [Merge] ${data.raw_count} code locations → ${data.active_count} active sinks + ${data.suppressed_count} suppressed decoys.</div>`;
+        consoleBox.scrollTop = consoleBox.scrollHeight;
+
+        if (data.ai_summary) {
+          document.getElementById('sastAiSummaryCard').style.display = 'block';
+          document.getElementById('sastAiSummaryText').textContent = data.ai_summary.executive_summary;
+          document.getElementById('sastRecallBadge').textContent = 'Ground-truth recall: ' + data.ai_summary.ground_truth_recall;
+          document.getElementById('sastToolsGrid').innerHTML = (data.ai_summary.tools_executed || []).map(tool => {
+            const m = String(tool.metric || '').match(/^(\d+)\s+sinks?\s*(?:\u00b7\s*)?(.*)$/);
+            return `
+            <div class="cds-tile">
+              <div class="cds-tile-head"><span class="cds-tile-name">${tool.name}</span>${tool.status === 'OK'
+                ? '<span class="cds-tag cds-tag--green">Ran</span>' : `<span class="cds-tag cds-tag--red">${tool.status}</span>`}</div>
+              ${m ? `<div class="cds-kpi"><span class="cds-kpi-num">${m[1]}</span><span class="cds-kpi-label">sinks</span></div>
+                     <div class="cds-helper">${m[2]}</div>` : `<div class="cds-helper" style="margin-top:.5rem">${tool.metric}</div>`}
+            </div>`; }).join('');
+        }
+        if (window.renderEngineAttribution) renderEngineAttribution(data.engine_report);
+        if (window.intelReset) intelReset();
+
+        document.getElementById('sastComparisonGrid').style.display = 'grid';
+        document.getElementById('rawSastBadge').textContent = `${data.raw_count} Raw Findings`;
+        document.getElementById('cleanedSastBadge').textContent = `${data.suppressed_count ?? 0} suppressed / ${data.active_count ?? 0} active`;
+        document.getElementById('btnAiDecoyTriage').disabled = false;
+
+        renderSastFindingsTable(sastRawData);
+        const pBtn = document.getElementById('btnProceedStep3');
+        if (pBtn) pBtn.style.display = 'inline-flex';
+      } catch (e) {
+        consoleBox.innerHTML += `<div class="console-line warn">SAST error: ${e}</div>`;
+      } finally {
+        btn.textContent = 'Run SAST again';
+        btn.disabled = false;
+      }
+    }
+
+    let sastActiveFilter = 'ALL';
+
+    function setSastFilter(f) {
+      sastActiveFilter = f;
+      document.querySelectorAll('#sastFindingsTableCard .filter-pill').forEach(p => p.classList.remove('active'));
+      const map = {
+        'ALL': 'sastPillAll',
+        'ACTIVE': 'sastPillActive',
+        'DECOY': 'sastPillDecoy',
+        'QUANTUM': 'sastPillQuantum',
+        'VAULT': 'sastPillVault'
+      };
+      const el = document.getElementById(map[f]);
+      if (el) el.classList.add('active');
+      renderSastFindingsTable(sastRawData);
+    }
+
+    function renderSastFindingsTable(findings) {
+      const card = document.getElementById('sastFindingsTableCard');
+      const tbody = document.getElementById('sastFindingsTbody');
+      const badge = document.getElementById('sastFindingsCountBadge');
+
+      if (!findings || !findings.length) {
+        card.style.display = 'none';
+        return;
+      }
+
+      card.style.display = 'block';
+
+      // Update pill counts
+      const totalCnt = findings.length;
+      const actCnt = findings.filter(f => !f.is_safe_decoy).length;
+      const decCnt = findings.filter(f => f.is_safe_decoy).length;
+      const qCnt = findings.filter(f => f.quantum_flag).length;
+      setPqcBadge(qCnt);
+      const vCnt = findings.filter(f => f.vault_candidate).length;
+
+      if (document.getElementById('sastPillAll')) document.getElementById('sastPillAll').textContent = `All Sinks (${totalCnt})`;
+      if (document.getElementById('sastPillActive')) document.getElementById('sastPillActive').textContent = `Active Sinks (${actCnt})`;
+      if (document.getElementById('sastPillDecoy')) document.getElementById('sastPillDecoy').textContent = `Safe Decoys (${decCnt})`;
+      if (document.getElementById('sastPillQuantum')) document.getElementById('sastPillQuantum').textContent = `Cryptographic & PQC (${qCnt})`;
+      if (document.getElementById('sastPillVault')) document.getElementById('sastPillVault').textContent = `Vault Secrets (${vCnt})`;
+
+      let filtered = findings.filter(f => {
+        if (sastActiveFilter === 'ACTIVE' && f.is_safe_decoy) return false;
+        if (sastActiveFilter === 'DECOY' && !f.is_safe_decoy) return false;
+        if (sastActiveFilter === 'QUANTUM' && !f.quantum_flag) return false;
+        if (sastActiveFilter === 'VAULT' && !f.vault_candidate) return false;
+        return true;
+      });
+
+      badge.textContent = `${filtered.length} of ${totalCnt} Sinks Displayed`;
+
+      const pageSizeVal = document.getElementById('sastPageSizeSelect')?.value || 'all';
+      let toRender = filtered;
+      if (pageSizeVal !== 'all') {
+        const limit = parseInt(pageSizeVal, 10);
+        toRender = filtered.slice(0, limit);
+      }
+
+      tbody.innerHTML = toRender.map((f, idx) => {
+        const fileB = f.file_path ? f.file_path.split('/').pop() : 'Unknown';
+        const toolTag = f.tool_tag || 'Custom Java AST Taint Engine';
+        let attrBadges = '';
+        if (f.is_safe_decoy) {
+          attrBadges += '<span class="badge badge-suppressed">Decoy</span> ';
+        } else {
+          attrBadges += '<span class="badge badge-confirmed">Active</span> ';
+        }
+        if (f.quantum_flag) attrBadges += '<span class="badge badge-quantum">PQC</span> ';
+        if (f.vault_candidate) attrBadges += '<span class="badge badge-vault">Vault</span> ';
+        if (f.dpdp_pii_flag) attrBadges += '<span class="badge badge-dpdp">DPDP</span> ';
+
+        const originalIdx = sastRawData.indexOf(f);
+
+        return `
+          <tr>
+            <td style="font-family:'JetBrains Mono'; color:var(--text-dim);">${idx + 1}</td>
+            <td>${(f.engines && f.engines.length) ? window.enginePills(f.engines) : `<span class="badge badge-tool">${toolTag}</span>`}</td>
+            <td><code style="font-weight:700;">${f.cwe}</code></td>
+            <td style="font-weight:600;">${f.vuln_type}</td>
+            <td><code>${fileB}:${f.line || 1}</code></td>
+            <td>${attrBadges}</td>
+            <td>
+              <button class="btn btn-outline" style="padding:0.25rem 0.55rem; font-size:0.75rem;" onclick="openSastDetailModal(${originalIdx >= 0 ? originalIdx : idx})">
+                AST Flow Steps
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openSastDetailModal(idx) {
+      const f = sastRawData[idx];
+      if (!f) return;
+
+      document.getElementById('mTitle').textContent = f.vuln_type;
+      document.getElementById('mStatusBadge').textContent = f.is_safe_decoy ? "SAFE DECOY" : "ACTIVE SINK";
+      document.getElementById('mCweBadge').textContent = f.cwe;
+      document.getElementById('mToolBadge').textContent = f.tool_tag || "Custom Java AST Taint Engine";
+      document.getElementById('mAgenticBadge').style.display = 'none';
+
+      document.getElementById('mFilePath').textContent = `${f.file_path || 'No source file'}:${f.line || ''}`;
+      document.getElementById('mCodeSnippet').textContent = f.code_snippet || '// Source context';
+
+      const flow = f.ast_flow || {};
+      document.getElementById('mStepSource').innerHTML = `<strong>1. Input Source:</strong> ${flow.source || 'Parameter binding in controller'}`;
+      document.getElementById('mStepProp').innerHTML = `<strong>2. Taint Propagation:</strong> ${flow.propagation || 'Tainted dataflow through method execution'}`;
+      document.getElementById('mStepSink').innerHTML = `<strong>3. Dangerous Sink:</strong> ${flow.sink || 'Sensitive execution call'}`;
+      document.getElementById('mStepDefense').innerHTML = `<strong>4. Guard Evaluation:</strong> ${flow.defense_eval || 'No sanitizer detected'}`;
+      document.getElementById('mStepFix').innerHTML = `<strong>5. Remediation:</strong> ${flow.remediation || 'Follow OWASP guidelines'}`;
+
+      document.getElementById('mUrl').textContent = "Not targeted in runtime yet";
+      document.getElementById('mPayload').textContent = "Pending DAST verification";
+      document.getElementById('mEvidence').textContent = "Static AST analysis detected vulnerability sink in source code.";
+      document.getElementById('mScreenshotBox').style.display = 'none';
+      document.getElementById('mCurlBox').textContent = `# Replay probe will be generated in Step 3`;
+      document.getElementById('mPostmanScriptBox').textContent = `// Postman assertion test suite`;
+
+      let alerts = '';
+      if (f.dpdp_pii_flag) {
+        alerts += `<div style="background:#fff7ed; border:1px solid #fed7aa; padding:0.6rem; border-radius:6px; color:#c2410c; margin-bottom:0.4rem; font-size:0.78rem;">
+          <strong>Indian DPDP Act 2023 Sec 8(5):</strong> Credential or personal data exposed without reasonable safeguards.
+        </div>`;
+      }
+      if (f.quantum_flag) {
+        alerts += `<div style="background:#f4f6f9; border:1px solid #d3d9e3; padding:0.6rem; border-radius:6px; color:#1f3b63; margin-bottom:0.4rem; font-size:0.78rem; display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>NIST Post-Quantum Cryptography Alert:</strong> Classical cipher/key (RSA/MD5/DES/SHA-1) vulnerable to Shor's Quantum Algorithm. Requires NIST FIPS 203/204 transition.</div>
+          <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.72rem; margin-left:0.5rem;" onclick="openQuantumModal()">View PQC Guide</button>
+        </div>`;
+      }
+      if (f.vault_candidate) {
+        alerts += `<div style="background:#fbfaf6; border:1px solid #e6dcc6; padding:0.6rem; border-radius:6px; color:#6b4f1d; margin-bottom:0.4rem; font-size:0.78rem; display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>HashiCorp Vault Candidate (CWE-798):</strong> Hardcoded secret or keystore in source control. Rotate and migrate to Vault KV v2.</div>
+          <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.72rem; margin-left:0.5rem;" onclick="openVaultModal()">1-Click Vault Migration</button>
+        </div>`;
+      }
+      document.getElementById('mCompliance').innerHTML = alerts;
+
+      document.getElementById('inspectModal').style.display = 'flex';
+    }
+
+    async function runAiDecoyTriage() {
+      const btn = document.getElementById('btnAiDecoyTriage');
+      const consoleBox = document.getElementById('sastConsole');
+      btn.textContent = 'Requesting second opinion…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/sast/ai-decoy-triage', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({source_path: document.getElementById('destDirInput').value})
+        });
+        const data = await res.json();
+
+        if (data.status === 'NO_API_KEY') {
+          consoleBox.innerHTML += `<div class="console-line warn">[AI TRIAGE] ${data.note}</div>`;
+          document.getElementById('jevVerdictText').innerHTML = `${data.note}`;
+        } else {
+          consoleBox.innerHTML += `<div class="console-line agent">[AI TRIAGE] [${new Date().toLocaleTimeString()}] ${data.note}</div>`;
+          consoleBox.innerHTML += `<div class="console-line success">✓ ${data.evaluated} of ${data.total_suppressed_decoys} suppressed decoys sent to ${data.model}; AI agreed "safe decoy" on ${data.ai_agreed_safe}/${data.evaluated}.</div>`;
+          document.getElementById('cleanedSastBadge').textContent = `${data.ai_agreed_safe}/${data.evaluated} AI-confirmed decoys`;
+          document.getElementById('jevVerdictText').innerHTML = `
+            OpenAI Decisions API (<code>${data.model}</code>) evaluated ${data.evaluated} suppressed decoys as predicate questions (real API calls, SQLite-cached).<br>
+            <span style="color:#059669; font-weight:700;">Actual cost: ${data.total_input_tokens} input tokens, ${data.total_output_tokens} output tokens • AI agreed on ${data.ai_agreed_safe}/${data.evaluated}</span>
+          `;
+        }
+
+        document.getElementById('stepCard2').classList.add('completed');
+        const pBtn = document.getElementById('btnProceedStep3');
+        if (pBtn) pBtn.style.display = 'inline-flex';
+
+        setSastFilter('ACTIVE');
+      } catch (e) {
+        consoleBox.innerHTML += `<div class="console-line warn">AI triage error: ${e}</div>`;
+      } finally {
+        btn.textContent = 'Second opinion received';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // STEP 3: Active DAST Pipeline (Live Console Stream)
+    // -------------------------------------------------------------
+    // Real Playwright evidence from THIS DAST run: only findings whose screenshot Chromium actually captured.
+    function renderPlaywrightProofs(findings, stats) {
+      const E = escapeHtmlSafe;
+      const host = document.getElementById('playwrightProofs'), badge = document.getElementById('playwrightProofBadge');
+      const shots = findings.filter(f => (f.screenshot_path || '').startsWith('/screenshots/xss_'));
+      const httpOnly = findings.filter(f => f.cwe === 'CWE-79' && !(f.screenshot_path || '').startsWith('/screenshots/xss_'));
+      badge.textContent = `${shots.length} browser-verified`;
+      badge.className = 'badge ' + (shots.length ? 'badge-confirmed' : 'badge-code');
+      if (stats && stats.target_online === false) {
+        host.innerHTML = '<div class="console-line warn">Target was offline: no browser was launched, so there are no Playwright proofs for this run.</div>';
+        return;
+      }
+      host.innerHTML = (shots.length ? `<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1rem;">${shots.map(f => `
+          <div style="background:#fff; border:1px solid var(--border); border-radius:8px; padding:.75rem;">
+            <div style="font-size:.76rem; font-weight:700; margin-bottom:.35rem; color:var(--text-main);">
+              ${E(f.cwe)} · <code>${E((f.url || '').replace(/^https?:\/\/[^/]+/, ''))}</code>
+              ${f.is_agentic_ai ? '<span class="badge badge-agentic">AI payload</span>' : ''}</div>
+            <div style="font-size:.7rem; margin-bottom:.4rem;">param <code>${E(f.parameter || '')}</code> = <code>${E(f.payload || '')}</code> · ${E(f.scanner || '')}</div>
+            <a href="${E(f.screenshot_path)}" target="_blank" rel="noopener"><img src="${E(f.screenshot_path)}" alt="Chromium capture" loading="lazy" style="width:100%; border-radius:6px; border:1px solid var(--border);"></a>
+          </div>`).join('')}</div>`
+        : '<div>No XSS payload executed in Chromium on this run, so there are no screenshots. (Nothing is shown rather than a placeholder.)</div>')
+        + (httpOnly.length ? `<div style="margin-top:.8rem; font-size:.74rem;">${httpOnly.length} XSS finding(s) were confirmed by HTTP reflection only (no browser screenshot, e.g. Chromium not installed or the execution check didn't fire): ${httpOnly.map(f => `<code>${E((f.url || '').replace(/^https?:\/\/[^/]+/, ''))}</code>`).join(', ')}</div>` : '');
+    }
+
+    async function executeDastScan() {
+      const btn = document.getElementById('btnRunDast');
+      const consoleBox = document.getElementById('dastConsole');
+      const progressBox = document.getElementById('dastProgressBox');
+      const bar = document.getElementById('dastProgressBar');
+      const label = document.getElementById('dastProgressLabel');
+      const pct = document.getElementById('dastProgressPct');
+      const streamBox = document.getElementById('dastLiveStreamBox');
+      const streamItems = document.getElementById('liveStreamItems');
+      const counter = document.getElementById('liveConfirmedCounter');
+
+      btn.textContent = 'Running DAST…';
+      btn.disabled = true;
+      consoleBox.style.display = 'block';
+      consoleBox.innerHTML = '<div class="console-line info">[DAST] [1/5] Launching endpoint reconnaissance & header/TLS audit...</div>';
+      progressBox.style.display = 'block';
+      streamBox.style.display = 'block';
+      streamItems.innerHTML = '';
+
+      try {
+        const targetUrl = document.getElementById('targetUrlInput').value;
+        const res = await fetch('/api/dast/run', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            target_url: targetUrl,
+            source_path: document.getElementById('destDirInput').value,
+            sast_guided: document.getElementById('dastGuided').checked,
+            independent_discovery: document.getElementById('dastIndependent').checked,
+            decoy_audit: document.getElementById('dastDecoy').checked,
+            session_cookie: document.getElementById('sessionCookieInput').value.trim() || null,
+            include_policy: document.getElementById('dastPolicy').checked
+          })
+        });
+        const data = await res.json();
+        if (data.stats && window.renderDastStats) renderDastStats(data.stats, data.ai_payloads_used, data.ai_payloads_note);
+        renderPlaywrightProofs(data.findings || [], data.stats);
+        (data.logs || []).forEach(l => { consoleBox.innerHTML += `<div class="console-line info">[${l.stage}] ${l.desc}</div>`; });
+
+        const probes = data.probes || [];
+        const total = Math.max(1, probes.length);
+        let confirmedCount = 0;
+
+        for (let i = 0; i < probes.length; i++) {
+          const p = probes[i];
+          const curr = i + 1;
+          const percentage = Math.round((curr / total) * 100);
+
+          bar.style.width = `${percentage}%`;
+          pct.textContent = `${percentage}%`;
+          label.textContent = `[Probe ${curr}/${total}] ${p.route}`;
+
+          if (p.is_agentic && p.technique) {
+            consoleBox.innerHTML += `<div class="console-line agent">[AI AGENT] (${escapeHtmlSafe(p.ai_engine || 'AI')}) ${escapeHtmlSafe(p.route)}: ${escapeHtmlSafe(p.technique)}</div>`;
+            if (p.ai_chain_of_thought && p.ai_chain_of_thought.length) {
+              consoleBox.innerHTML += `<div class="console-line agent" style="padding-left:1.2rem; opacity:0.85;">↳ ${escapeHtmlSafe(p.ai_chain_of_thought[0])}</div>`;
+            }
+          }
+          consoleBox.innerHTML += `<div class="console-line info">[PROBE] ${escapeHtmlSafe(p.method)} ${escapeHtmlSafe(p.route)} :: ${escapeHtmlSafe(p.param)}='${escapeHtmlSafe(p.payload)}' -> ${escapeHtmlSafe(p.evidence)}</div>`;
+          consoleBox.scrollTop = consoleBox.scrollHeight;
+
+          if (p.evidence_origin === 'live-http') { confirmedCount++; }
+          counter.textContent = `${confirmedCount} live-verified`;
+
+          const row = document.createElement('div');
+          row.className = 'live-finding-row';
+          row.innerHTML = `
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+              <span class="badge badge-confirmed">#${curr}</span>
+              <code style="font-weight:700; color:var(--text-main);">${p.cwe}</code>
+              <span style="font-weight:600;">${p.vuln_type}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+              <code style="color:var(--amber); font-size:0.75rem;">${p.route}</code>
+              <span class="badge ${p.is_agentic ? 'badge-agentic' : 'badge-code'}">${p.technique}</span>
+              ${window.discoveryPill ? window.discoveryPill(p.discovery, p.evidence_origin) : ''}
+            </div>
+          `;
+          streamItems.prepend(row);
+
+          if (i < 20) {
+            await new Promise(r => setTimeout(r, 35));
+          } else if (i % 5 === 0) {
+            await new Promise(r => setTimeout(r, 15));
+          }
+        }
+
+        consoleBox.innerHTML += `<div class="console-line success">✓ [DAST Execution Complete] ${confirmedCount} of ${probes.length} probe result(s) carry live HTTP evidence (evidence_origin = live-http); the rest are not counted as verified.</div>`;
+        document.getElementById('stepCard3').classList.add('completed');
+        loadPostmanPanel();
+        const pBtn4 = document.getElementById('btnProceedStep4');
+        if (pBtn4) pBtn4.style.display = 'inline-flex';
+        executeCorrelation();
+
+      } catch (e) {
+        consoleBox.innerHTML += `<div class="console-line warn">DAST error: ${e}</div>`;
+      } finally {
+        btn.textContent = 'Run DAST again';
+        btn.disabled = false;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // STEP 4: 4-Factor Correlation & Issues Table
+    // -------------------------------------------------------------
+    async function executeCorrelation() {
+      try {
+        const targetUrl = document.getElementById('targetUrlInput').value;
+        const destDir = document.getElementById('destDirInput').value;
+        const res = await fetch('/api/correlate/run', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({source_path: destDir, target_url: targetUrl, session_cookie: document.getElementById('sessionCookieInput').value.trim() || null})
+        });
+        const data = await res.json();
+        await loadCorrelationTable();
+        if (window.intelReset) intelReset();
+        document.getElementById('stepCard4').classList.add('completed');
+        return data;
+      } catch (e) {
+        console.error('Correlation error:', e);
+        return null;
+      }
+    }
+
+    let lastSuppressedCount = null; // set from the real /api/sast/run response (suppressed_count)
+
+    async function loadCorrelationTable() {
+      const res = await fetch('/api/issues');
+      const data = await res.json();
+      issuesData = data.issues || [];
+
+      // Update metrics
+      const conf = issuesData.filter(i => i.status === 'Confirmed').length;
+      const run = issuesData.filter(i => i.status === 'Runtime only').length;
+      const code = issuesData.filter(i => i.status === 'Code only').length;
+      const vault = issuesData.filter(i => i.vault_candidate).length;
+      const quantum = issuesData.filter(i => i.quantum_flag).length;
+      if (issuesData.length) setPqcBadge(quantum);
+      const agentic = issuesData.filter(i => i.is_agentic_ai).length;
+      const dpdp = issuesData.filter(i => i.dpdp_pii_flag).length;
+
+      document.getElementById('mConfirmed').textContent = issuesData.length ? conf : '—';
+      document.getElementById('mRuntime').textContent = issuesData.length ? run : '—';
+      document.getElementById('mCode').textContent = issuesData.length ? code : '—';
+      const mS = document.getElementById('mSuppressed');
+      if (mS) mS.textContent = lastSuppressedCount === null ? '—' : lastSuppressedCount;
+
+      if (document.getElementById('pillAll')) document.getElementById('pillAll').textContent = `All Issues (${issuesData.length})`;
+      if (document.getElementById('pillConfirmed')) document.getElementById('pillConfirmed').textContent = `Confirmed (${conf})`;
+      if (document.getElementById('pillRuntime')) document.getElementById('pillRuntime').textContent = `Runtime Only (${run})`;
+      if (document.getElementById('pillCode')) document.getElementById('pillCode').textContent = `Code Only (${code})`;
+      if (document.getElementById('pillVault')) document.getElementById('pillVault').textContent = `Vault Secrets (${vault})`;
+      if (document.getElementById('pillQuantum')) document.getElementById('pillQuantum').textContent = `Quantum Weak (${quantum})`;
+      if (document.getElementById('pillAgentic')) document.getElementById('pillAgentic').textContent = `Agentic AI (${agentic})`;
+      if (document.getElementById('pillDpdp')) document.getElementById('pillDpdp').textContent = `DPDP PII (${dpdp})`;
+
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('issuesTbody');
+      const q = document.getElementById('searchBox').value.toLowerCase();
+
+      const filtered = issuesData.filter(i => {
+        if (activeFilter === 'CONFIRMED' && i.status !== 'Confirmed') return false;
+        if (activeFilter === 'RUNTIME' && i.status !== 'Runtime only') return false;
+        if (activeFilter === 'CODE' && i.status !== 'Code only') return false;
+        if (activeFilter === 'VAULT' && !i.vault_candidate) return false;
+        if (activeFilter === 'QUANTUM' && !i.quantum_flag) return false;
+        if (activeFilter === 'AGENTIC' && !i.is_agentic_ai) return false;
+        if (activeFilter === 'DPDP' && !i.dpdp_pii_flag) return false;
+        if (q) {
+          const hay = `${i.cwe} ${i.vuln_type} ${i.file_path || ''} ${i.url || ''} ${i.tool_tag || ''}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 2.5rem; color:var(--text-dim);">No matching issues found.</td></tr>`;
+        return;
+      }
+
+      const pageSizeVal = document.getElementById('corrPageSizeSelect')?.value || 'all';
+      let toRender = filtered;
+      if (pageSizeVal !== 'all') {
+        toRender = filtered.slice(0, parseInt(pageSizeVal, 10));
+      }
+
+      tbody.innerHTML = toRender.map(i => {
+        let badgeClass = 'badge-confirmed';
+        if (i.status === 'Runtime only') badgeClass = 'badge-runtime';
+        if (i.status === 'Code only') badgeClass = 'badge-code';
+
+        let diffs = '';
+        if (i.is_agentic_ai) diffs += `<span class="badge badge-agentic">Agentic</span> `;
+        if (i.dpdp_pii_flag) diffs += `<span class="badge badge-dpdp">DPDP 2023</span> `;
+        if (i.quantum_flag) diffs += `<span class="badge badge-quantum">PQC</span> `;
+        if (i.vault_candidate) diffs += `<span class="badge badge-vault">Vault</span>`;
+
+        const fileLine = i.file_path ? `${i.file_path.split('/').pop()}:${i.line}` : '<span style="color:var(--text-dim);">-</span>';
+        const urlStr = i.url ? i.url.replace(/^https?:\/\/[^/]+/, '') : '<span style="color:var(--text-dim);">-</span>';
+        const tool = i.tool_tag || 'Custom Java AST Taint Engine';
+
+        return `
+          <tr>
+            <td style="font-family:'JetBrains Mono'; color:var(--text-dim); font-size:0.75rem;">${i.issue_id}</td>
+            <td><span class="badge ${badgeClass}">${i.status}</span></td>
+            <td><code style="color:var(--text-main); font-weight:700;">${i.cwe}</code></td>
+            <td class="wrap-cell" style="font-weight:600;">${i.vuln_type}</td>
+            <td>${(i.scanners_matched && i.scanners_matched.length) ? window.enginePills(i.scanners_matched) : `<span class="badge badge-tool">${tool}</span>`}
+              ${window.discoveryPill ? window.discoveryPill(((i.vector_breakdown || {}).dast_discoveries || [(i.vector_breakdown || {}).dast_discovery])[0], (i.vector_breakdown || {}).runtime_origin) : ''}</td>
+            <td><code>${fileLine}</code></td>
+            <td><code style="color:var(--amber);">${urlStr}</code></td>
+            <td>
+              <strong style="color:var(--crimson); font-family:'JetBrains Mono';">${Math.round(i.risk_score)}</strong>/100
+            </td>
+            <td>${diffs || '<span style="color:var(--text-dim);">-</span>'}</td>
+            <td>
+              <button class="btn btn-outline" style="padding:0.25rem 0.6rem; font-size:0.75rem;" onclick="openModal(${i.issue_id})">
+                Inspect Link
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function setFilter(f, e) {
+      activeFilter = f;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      if (e && e.target && e.target.classList.contains('filter-pill')) {
+        e.target.classList.add('active');
+      } else {
+        const pillId = f === 'ALL' ? 'pillAll' :
+                       f === 'CONFIRMED' ? 'pillConfirmed' :
+                       f === 'RUNTIME' ? 'pillRuntime' :
+                       f === 'CODE' ? 'pillCode' :
+                       f === 'VAULT' ? 'pillVault' :
+                       f === 'QUANTUM' ? 'pillQuantum' :
+                       f === 'AGENTIC' ? 'pillAgentic' : 'pillDpdp';
+        const el = document.getElementById(pillId);
+        if (el) el.classList.add('active');
+      }
+      renderTable();
+    }
+
+    function filterTable() {
+      renderTable();
+    }
+
+    let activeInspectedIssue = null;
+
+    function escapeHtmlSafe(str) {
+      return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderVectorBreakdownHtml(issue) {
+      return _renderVectorBreakdownBase(issue) + (window.renderIssueProvenanceHtml ? window.renderIssueProvenanceHtml(issue) : '');
+    }
+
+    function _renderVectorBreakdownBase(issue) {
+      const vb = issue.vector_breakdown || {};
+      if (issue.status === 'Runtime only' || vb.mode === 'RUNTIME_ONLY') {
+        return `
+          <div style="font-weight:700; font-size:0.78rem; color:#92400e; margin-bottom:0.25rem;">
+            Runtime-Only Policy Classification (Rank 2)
+          </div>
+          <div style="font-size:0.75rem; color:#78350f;">
+            ${escapeHtmlSafe(vb.note || 'Observed directly in live HTTP response headers; governed by global server middleware rather than a single Java taint sink.')}
+          </div>
+        `;
+      }
+      if (issue.status === 'Code only' || vb.mode === 'CODE_ONLY') {
+        return `
+          <div style="font-weight:700; font-size:0.78rem; color:#0369a1; margin-bottom:0.25rem;">
+            Static AST Sink Classification (Rank 3 • Code-Only)
+          </div>
+          <div style="font-size:0.75rem; color:#0c4a6e;">
+            ${escapeHtmlSafe(vb.note || issue.link_explanation || 'Verified in static AST; not reached by unauthenticated live HTTP probes.')}
+          </div>
+        `;
+      }
+
+      const cg = Math.round((vb.callgraph || 0) * 100);
+      const cwePct = Math.round((vb.cwe_graph || 0) * 100);
+      const pmPct = Math.round((vb.param_lineage || 0) * 100);
+      const bhPct = Math.round((vb.sink_behavior || 0) * 100);
+      const prPct = Math.round((vb.defense_parity || 0) * 100);
+      const compPct = Math.round((vb.composite_score || issue.correlation_confidence || 0.95) * 100);
+      const arbiter = vb.arbiter_engine || 'Symbolic Call-Graph Proof (0 LLM Tokens)';
+      const isAiArbiter = arbiter.toLowerCase().includes('openai');
+      const verifiedEps = Array.isArray(vb.verified_endpoints) ? vb.verified_endpoints : [];
+
+      const rowBar = (label, weight, pct, note) => `
+        <div style="margin-bottom:0.38rem;">
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:600; color:#1e293b;">
+            <span>${label} <span style="color:#64748b; font-weight:500;">(${weight})</span></span>
+            <span style="font-family:'JetBrains Mono'; color:#059669;">${pct}%</span>
+          </div>
+          <div style="height:5px; background:#dcfce7; border-radius:3px; overflow:hidden; margin:2px 0;">
+            <div style="width:${Math.min(100, pct)}%; height:100%; background:#067647;"></div>
+          </div>
+          ${note ? `<div style="font-size:0.69rem; color:#475569;">${escapeHtmlSafe(note)}</div>` : ''}
+        </div>
+      `;
+
+      const checks = Array.isArray(vb.link_checks) ? vb.link_checks : [];
+      const checkIcon = (ok) => ok === true ? '✓' : (ok === false ? '✕' : '–');
+      const whyJoined = (vb.plain_explanation || checks.length) ? `
+        <div style="margin-bottom:0.6rem; padding:0.5rem 0.6rem; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px;">
+          <div style="font-weight:700; font-size:0.78rem; color:#065f46; margin-bottom:0.3rem;">Why these two findings were joined</div>
+          ${vb.plain_explanation ? `<div style="font-size:0.74rem; color:#14532d; margin-bottom:0.35rem;">${escapeHtmlSafe(vb.plain_explanation)}</div>` : ''}
+          ${checks.map(c => `<div style="font-size:0.71rem; color:#1e293b; margin:0.12rem 0;">${checkIcon(c.ok)} ${escapeHtmlSafe(c.text || '')}</div>`).join('')}
+          ${vb.suppression_overridden ? `<div style="font-size:0.7rem; color:#92400e; margin-top:0.3rem;">SAST had marked this sink safe (${escapeHtmlSafe(String(vb.suppression_overridden))}); the runtime proof overrides that.</div>` : ''}
+          ${Array.isArray(vb.sink_lines) && vb.sink_lines.length > 1 ? `<div style="font-size:0.7rem; color:#475569; margin-top:0.3rem;">Same bug, all flagged lines in this method: ${vb.sink_lines.map(l => 'L' + l).join(', ')}</div>` : ''}
+        </div>` : '';
+
+      return whyJoined + `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.5rem;">
+          <div style="font-weight:700; font-size:0.8rem; color:#065f46;">
+            Vajra-GraphLink 5-Vector Score: <span style="font-family:'JetBrains Mono'; font-size:0.86rem;">${compPct}%</span>
+          </div>
+          <span class="badge ${isAiArbiter ? 'badge-agentic' : 'badge-tool'}" style="font-size:0.68rem;">
+            ${isAiArbiter ? 'AI arbiter · ' : ''}${escapeHtmlSafe(arbiter)}
+          </span>
+        </div>
+        ${rowBar('V1. Inter-Procedural AST Call-Graph', '30%', cg, vb.hop_trace)}
+        ${rowBar('V2. CWE Taxonomic Subsumption', '25%', cwePct, vb.cwe_note)}
+        ${rowBar('V3. Taint-Seed Parameter Lineage', '15%', pmPct, vb.param_note)}
+        ${rowBar('V4. JVM Sink <-> HTTP Differential Causality', '15%', bhPct, vb.behavior_note)}
+        ${rowBar('V5. Filter / Sanitizer Tier Parity', '15%', prPct, vb.parity_note)}
+        ${verifiedEps.length > 1 ? `
+          <div style="margin-top:0.45rem; padding-top:0.4rem; border-top:1px dashed #a7f3d0; font-size:0.7rem; color:#065f46;">
+            <strong>Shared Sink Verified Across ${verifiedEps.length} Live Routes:</strong>
+            <code>${escapeHtmlSafe(verifiedEps.slice(0, 6).join(', '))}${verifiedEps.length > 6 ? ` (+${verifiedEps.length - 6} more)` : ''}</code>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function openModal(id) {
+      const issue = issuesData.find(i => i.issue_id === id);
+      if (!issue) return;
+      activeInspectedIssue = issue;
+
+      document.getElementById('mTitle').textContent = issue.vuln_type;
+      document.getElementById('mStatusBadge').textContent = issue.status.toUpperCase();
+      document.getElementById('mCweBadge').textContent = issue.cwe !== issue.raw_cwe && issue.raw_cwe
+        ? `${issue.cwe} (raw: ${issue.raw_cwe})`
+        : issue.cwe;
+      document.getElementById('mToolBadge').textContent = issue.tool_tag || 'Custom Java AST Taint Engine';
+
+      const statusBadge = document.getElementById('mStatusBadge');
+      statusBadge.className = 'badge ' + (
+        issue.status === 'Confirmed' ? 'badge-confirmed' :
+        issue.status === 'Runtime only' ? 'badge-runtime' : 'badge-code'
+      );
+
+      document.getElementById('mAgenticBadge').style.display = issue.is_agentic_ai ? 'inline-flex' : 'none';
+
+      // Accurate Source File & Enclosing Java Function Display (zero fake ':1' or 'Unknown.java')
+      const fnBadge = document.getElementById('mFunctionBadge');
+      const flowHeading = document.getElementById('mFlowHeading');
+      if (issue.file_path) {
+        document.getElementById('mFilePath').textContent = issue.line
+          ? `${issue.file_path}:${issue.line}`
+          : issue.file_path;
+        document.getElementById('mCodeSnippet').textContent = issue.code_snippet || '// Source asset referenced above';
+        if (issue.function_name) {
+          fnBadge.textContent = `fn: ${issue.function_name}()`;
+          fnBadge.style.display = 'inline-flex';
+        } else {
+          fnBadge.style.display = 'none';
+        }
+        flowHeading.textContent = 'Dynamic AST Taint & Call-Graph Trace:';
+      } else {
+        document.getElementById('mFilePath').textContent = 'Runtime HTTP Transport / Response Header Layer (Global Policy)';
+        document.getElementById('mCodeSnippet').textContent = `// No single Java taint sink line — observed in live HTTP response headers from ${issue.url || 'target server'}`;
+        fnBadge.style.display = 'none';
+        flowHeading.textContent = 'Live HTTP Header & Policy Telemetry:';
+      }
+
+      const flow = issue.ast_flow || {};
+      const stepLabels = issue.file_path
+        ? ['1. Entrypoint / Source:', '2. Call-Graph / Propagation:', '3. Exact AST Sink:', '4. Guard Evaluation:', '5. Remediation:']
+        : ['1. Live Probe Target:', '2. Inspection Layer:', '3. Policy Evaluated:', '4. Runtime Observation:', '5. Remediation:'];
+
+      document.getElementById('mStepSource').innerHTML = `<strong>${stepLabels[0]}</strong> ${escapeHtmlSafe(flow.source || 'N/A')}`;
+      document.getElementById('mStepProp').innerHTML = `<strong>${stepLabels[1]}</strong> ${escapeHtmlSafe(flow.propagation || 'N/A')}`;
+      document.getElementById('mStepSink').innerHTML = `<strong>${stepLabels[2]}</strong> ${escapeHtmlSafe(flow.sink || 'N/A')}`;
+      document.getElementById('mStepDefense').innerHTML = `<strong>${stepLabels[3]}</strong> ${escapeHtmlSafe(flow.defense_eval || 'N/A')}`;
+      document.getElementById('mStepFix').innerHTML = `<strong>${stepLabels[4]}</strong> ${escapeHtmlSafe(issue.fix_suggestion || flow.remediation || 'Follow OWASP guidelines')}`;
+
+      document.getElementById('mUrl').textContent = issue.url ? `${issue.method || 'GET'} ${issue.url}` : 'Not exposed / Unprobed static sink';
+      document.getElementById('mParam').textContent = issue.parameter || (issue.url ? '(headers / path)' : 'N/A');
+      document.getElementById('mPayload').textContent = issue.payload || (issue.url ? '(Diagnostic HTTP GET)' : 'N/A');
+      document.getElementById('mEvidence').textContent = issue.runtime_evidence || issue.link_explanation;
+      document.getElementById('mExplain').textContent = issue.link_explanation || '';
+
+      // Render 5-Vector Neuro-Symbolic Matrix
+      const matrixBox = document.getElementById('mVectorMatrix');
+      matrixBox.style.background = issue.status === 'Confirmed' ? '#f0fdf4' : (issue.status === 'Runtime only' ? '#fffbeb' : '#f0f9ff');
+      matrixBox.style.borderColor = issue.status === 'Confirmed' ? '#bbf7d0' : (issue.status === 'Runtime only' ? '#fde68a' : '#bae6fd');
+      matrixBox.innerHTML = renderVectorBreakdownHtml(issue);
+
+      // Screenshot Box: Only display when issue is Confirmed and has an applicable runtime visual proof
+      const shotBox = document.getElementById('mScreenshotBox');
+      const shotImg = document.getElementById('mScreenshotImg');
+      const shotTitle = document.getElementById('mScreenshotTitle');
+      const shotPath = issue.status === 'Confirmed' ? issue.screenshot_path : null;
+
+      if (shotPath) {
+        shotImg.src = shotPath;
+        if (shotTitle) {
+          shotTitle.textContent = 'Live Playwright Headless Chromium DOM Capture (CWE-79)';
+        }
+        shotBox.style.display = 'block';
+      } else {
+        shotBox.style.display = 'none';
+      }
+
+      // Replay Section & Live Postman Console reset
+      const replaySec = document.getElementById('mReplaySection');
+      const liveConsole = document.getElementById('mLivePostmanConsole');
+      const liveBtn = document.getElementById('btnLivePostmanVerify');
+      liveConsole.style.display = 'none';
+      liveConsole.innerHTML = '';
+
+      if (issue.url) {
+        replaySec.style.display = 'block';
+        liveBtn.disabled = false;
+        liveBtn.textContent = 'Verify Exploit Live (Postman Runner)';
+        document.getElementById('mCurlBox').textContent = issue.curl_command || `curl -i -s "${issue.url}"`;
+        document.getElementById('mPostmanScriptBox').textContent = issue.postman_test_script || '// Postman test assertions';
+      } else {
+        replaySec.style.display = 'none';
+      }
+
+      let alerts = '';
+      if (issue.dpdp_pii_flag) {
+        alerts += `<div style="background:#fff7ed; border:1px solid #fed7aa; padding:0.6rem; border-radius:6px; color:#c2410c; margin-bottom:0.4rem; font-size:0.78rem;">
+          <strong>Indian DPDP Act 2023 Sec 8(5):</strong> Credential or personal data exposed without reasonable safeguards.
+        </div>`;
+      }
+      if (issue.quantum_flag) {
+        alerts += `<div style="background:#f4f6f9; border:1px solid #d3d9e3; padding:0.6rem; border-radius:6px; color:#1f3b63; margin-bottom:0.4rem; font-size:0.78rem; display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>NIST Post-Quantum Cryptography Alert:</strong> Quantum-vulnerable algorithm (RSA/MD5/SHA-1/DES). Requires transition to NIST FIPS 203/204.</div>
+          <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.72rem; margin-left:0.5rem;" onclick="openQuantumModal()">View PQC Guide</button>
+        </div>`;
+      }
+      if (issue.vault_candidate) {
+        alerts += `<div style="background:#fbfaf6; border:1px solid #e6dcc6; padding:0.6rem; border-radius:6px; color:#6b4f1d; margin-bottom:0.4rem; font-size:0.78rem; display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>HashiCorp Vault Candidate (CWE-798):</strong> Hardcoded secret in source code. Rotate and migrate to Vault KV v2.</div>
+          <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.72rem; margin-left:0.5rem;" onclick="openVaultModal()">1-Click Vault Migration</button>
+        </div>`;
+      }
+      document.getElementById('mCompliance').innerHTML = alerts;
+
+      document.getElementById('inspectModal').style.display = 'flex';
+    }
+
+    async function copyModalCurl() {
+      const txt = document.getElementById('mCurlBox')?.textContent || '';
+      const btn = document.getElementById('btnCopyModalCurl');
+      if (!txt) return;
+      try {
+        await navigator.clipboard.writeText(txt);
+        if (btn) {
+          btn.textContent = 'Copied';
+          setTimeout(() => { btn.textContent = 'Copy cURL'; }, 1800);
+        }
+      } catch (err) {
+        console.error('Clipboard copy failed:', err);
+      }
+    }
+
+    async function runLivePostmanVerification() {
+      if (!activeInspectedIssue || !activeInspectedIssue.url) return;
+      const btn = document.getElementById('btnLivePostmanVerify');
+      const consoleEl = document.getElementById('mLivePostmanConsole');
+
+      btn.disabled = true;
+      btn.textContent = 'Sending live probe…';
+      consoleEl.style.display = 'block';
+      consoleEl.innerHTML = `
+        <div style="padding:0.65rem 0.8rem; font-size:0.76rem; color:#475569; background:#f8fafc;">
+          Executing live HTTP ${escapeHtmlSafe(activeInspectedIssue.method || 'GET')} request against <code>${escapeHtmlSafe(activeInspectedIssue.url)}</code>...
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/verify/live', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            issue_id: activeInspectedIssue.issue_id,
+            url: activeInspectedIssue.url,
+            method: activeInspectedIssue.method,
+            parameter: activeInspectedIssue.parameter,
+            payload: activeInspectedIssue.payload,
+            cwe: activeInspectedIssue.cwe,
+            vuln_type: activeInspectedIssue.vuln_type
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || `HTTP ${res.status}`);
+        }
+
+        const resp = data.response || {};
+        const assertions = data.postman_assertions || [];
+        const hdrLines = Object.entries(resp.headers || {})
+          .map(([k, v]) => `${k}: ${v}`)
+          .join('\n');
+
+        const assertionHtml = assertions.map(a => `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; padding:0.4rem 0.6rem; border-bottom:1px solid #f1f5f9; font-size:0.74rem;">
+            <div>
+              <span style="display:inline-block; font-weight:700; padding:0.08rem 0.38rem; border-radius:4px; font-size:0.68rem; margin-right:0.35rem; background:${a.passed ? '#dcfce7' : '#fee2e2'}; color:${a.passed ? '#166534' : '#991b1b'};">
+                ${a.passed ? '✓ PASS' : '✕ FAIL'}
+              </span>
+              <strong style="color:#1e293b;">pm.test("${escapeHtmlSafe(a.name)}")</strong>
+            </div>
+            <code style="font-size:0.7rem; color:#475569; text-align:right;">${escapeHtmlSafe(a.detail)}</code>
+          </div>
+        `).join('');
+
+        consoleEl.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; padding:0.5rem 0.7rem; background:${data.all_passed ? '#ecfdf5' : '#fffbeb'}; border-bottom:1px solid #e2e8f0;">
+            <div style="font-size:0.75rem; font-weight:700; color:${data.all_passed ? '#065f46' : '#92400e'};">
+              ${data.all_passed ? 'Live exploit reproduced' : 'Live probe completed'} (${data.passed_count}/${data.total_assertions} Postman Assertions Passed)
+            </div>
+            <div style="font-family:'JetBrains Mono'; font-size:0.71rem; color:#334155;">
+              HTTP ${resp.status_code} ${escapeHtmlSafe(resp.reason_phrase || '')} • ${resp.elapsed_ms} ms • ${escapeHtmlSafe(data.executed_at || '')}
+            </div>
+          </div>
+          <div>${assertionHtml}</div>
+          <details style="padding:0.45rem 0.7rem; background:#f8fafc; font-size:0.73rem;">
+            <summary style="cursor:pointer; font-weight:600; color:#1f4e8c; user-select:none;">
+              View Raw Live HTTP Response Headers &amp; Body (${resp.body_length || 0} bytes)
+            </summary>
+            <div class="code-box" style="margin-top:0.45rem; max-height:170px; font-size:0.71rem; color:#e2e8f0; white-space:pre-wrap;">HTTP/1.1 ${resp.status_code} ${escapeHtmlSafe(resp.reason_phrase || '')}\n${escapeHtmlSafe(hdrLines)}\n\n${escapeHtmlSafe(resp.body_preview || '(empty body)')}</div>
+          </details>
+        `;
+        btn.textContent = 'Run live probe again';
+      } catch (err) {
+        consoleEl.innerHTML = `
+          <div style="padding:0.65rem 0.8rem; font-size:0.75rem; color:#991b1b; background:#fef2f2;">
+            ✕ Live verification failed: ${escapeHtmlSafe(err.message || String(err))}
+          </div>
+        `;
+        btn.textContent = 'Retry Live Verification';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function closeModal(e) {
+      document.getElementById('inspectModal').style.display = 'none';
+    }
+
+    // Modal Controls for Vault and Quantum
+    // ---- HashiCorp Vault: plan built server-side from the real SAST secret findings ----
+    function vaultSrc() { return (document.getElementById('destDirInput') || {}).value || 'targets/VulnerableApp'; }
+    async function fetchVaultPlan() {
+      const res = await fetch('/api/vault/migration?source_path=' + encodeURIComponent(vaultSrc()));
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || ('HTTP ' + res.status));
+      return res.json();
+    }
+    async function refreshVaultCard() {
+      try {
+        const p = await fetchVaultPlan();
+        const v = p.by_verdict || {};
+        document.getElementById('vaultCardBadge').textContent = `${p.total_secrets} TO MIGRATE`;
+        document.getElementById('vaultCardText').innerHTML =
+          `SAST flagged <strong>${p.total_flagged}</strong> possible secrets in <code>${escapeHtmlSafe(vaultSrc())}</code>. After checking each real source line: ` +
+          `<strong>${p.total_secrets} real secrets</strong> across ${p.files_affected} file(s) to move into <code>${escapeHtmlSafe(p.mount_path)}</code>` +
+          `, ${v['already-externalized'] || 0} already use <code>\${ENV}</code>, ${v['not-a-secret'] || 0} are not secrets (labels, UI text, PEM markers), ${v['review'] || 0} need manual review.`;
+      } catch (e) {
+        document.getElementById('vaultCardBadge').textContent = 'N/A';
+        document.getElementById('vaultCardText').textContent = 'Vault plan unavailable: ' + e.message;
+      }
+    }
+    async function openVaultModal() {
+      document.getElementById('vaultModal').style.display = 'flex';
+      const body = document.getElementById('vaultModalBody');
+      body.innerHTML = 'Building migration plan from the current SAST run…';
+      let p;
+      try { p = await fetchVaultPlan(); } catch (e) { body.innerHTML = `<div class="console-line warn">Vault plan error: ${escapeHtmlSafe(e.message)}</div>`; return; }
+      const E = escapeHtmlSafe, v = p.by_verdict || {};
+      const vBadge = { 'migrate': 'badge-confirmed', 'already-externalized': 'badge-suppressed', 'not-a-secret': 'badge-tool', 'review': 'badge-runtime' };
+      const row = (s) => `<tr><td><span class="badge ${vBadge[s.verdict] || 'badge-tool'}">${E(s.verdict)}</span></td>
+        <td><code>${E(s.source_file.split('/').pop())}:${s.source_line}</code><br><span style="font-size:.68rem;color:var(--text-dim)">${E(s.scanner || '')}</span></td>
+        <td><code>${E(s.secret_key)}</code><br><span style="font-size:.7rem">${E(s.masked_value || (s.kind === 'keystore' ? 'binary key file' : '—'))}</span></td>
+        <td style="font-size:.72rem">${s.verdict === 'migrate' ? `<code>${E(s.vault_path)}</code><br>${E(s.inject)}` : E(s.verdict_reason)}</td></tr>`;
+      body.innerHTML = `
+        <div style="line-height:1.5;margin-bottom:.8rem">SAST flagged <strong>${p.total_flagged}</strong> lines as possible hard-coded secrets. Each real source line was re-read and triaged:
+          <span class="badge badge-confirmed">${v['migrate'] || 0} migrate</span> <span class="badge badge-suppressed">${v['already-externalized'] || 0} already externalized</span>
+          <span class="badge badge-tool">${v['not-a-secret'] || 0} not a secret</span> <span class="badge badge-runtime">${v['review'] || 0} review</span>.
+          Values are masked; full values are only ever sent to your own Vault.</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+          <div><strong>Vault Address:</strong> <code>${E(p.vault_address)}</code> ${p.vault_configured ? '<span class="badge badge-suppressed">configured</span>' : '<span class="badge badge-runtime">VAULT_ADDR / VAULT_TOKEN not set on server</span>'}<br>
+            <strong>Target Mount:</strong> <code>${E(p.mount_path)}</code> · ${p.vault_paths.length} path(s)</div>
+          <button id="btnPushVault" class="btn btn-emerald" onclick="pushToVault()" ${p.total_secrets ? '' : 'disabled'}>Push ${p.total_secrets} secret(s) to Vault</button>
+        </div>
+        <div id="vaultPushResult" style="display:none;border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;font-size:.8rem"></div>
+        <div class="table-scroll-container" style="max-height:260px;margin-bottom:1rem"><table><thead><tr><th>Verdict</th><th>Location</th><th>Key / value</th><th>Vault path &amp; fix / reason</th></tr></thead>
+          <tbody>${p.secrets.map(row).join('')}${p.held_back.map(row).join('')}</tbody></table></div>
+        <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;margin-bottom:0.4rem">Spring Cloud Vault configuration (application.yml):</div>
+        <div class="code-box" style="max-height:200px;margin-bottom:1rem;white-space:pre">${E(p.spring_cloud_vault_config || '# no real secrets to migrate')}</div>
+        <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;margin-bottom:0.4rem">CLI migration commands (set the NEW_* values to freshly rotated secrets):</div>
+        <div class="code-box" style="max-height:180px;color:#6cc79a;white-space:pre-wrap">${E((p.cli_commands || []).join('\n') || '# nothing to migrate')}</div>`;
+    }
+    function closeVaultModal() {
+      document.getElementById('vaultModal').style.display = 'none';
+    }
+    async function pushToVault() {
+      const btn = document.getElementById('btnPushVault'), box = document.getElementById('vaultPushResult');
+      btn.disabled = true; btn.textContent = 'Writing to Vault KV v2…';
+      try {
+        const r = await (await fetch('/api/vault/migrate?source_path=' + encodeURIComponent(vaultSrc()), { method: 'POST' })).json();
+        const ok = r.status === 'SUCCESS';
+        box.style.display = 'block';
+        box.style.background = ok ? '#ecfdf5' : '#fbfaf6';
+        box.style.border = '1px solid ' + (ok ? '#a7f3d0' : '#e6dcc6');
+        box.innerHTML = ok
+          ? `<strong>✓ Wrote ${r.migrated_count} key(s) to ${escapeHtmlSafe(r.vault_address)}</strong><br>${r.written.map((w) => `<code>${escapeHtmlSafe(w.path)}</code> v${w.version ?? '?'}: ${w.keys.map(escapeHtmlSafe).join(', ')}`).join('<br>')}<br><em>${escapeHtmlSafe(r.next_step)}</em>`
+          : `<strong>Not migrated — ${escapeHtmlSafe(r.status)}</strong><br>${escapeHtmlSafe(r.reason || '')}`;
+        btn.textContent = ok ? `✓ ${r.migrated_count} key(s) in Vault` : 'Retry push to Vault';
+        btn.disabled = ok;
+      } catch (e) {
+        box.style.display = 'block'; box.textContent = 'Vault error: ' + e;
+        btn.disabled = false; btn.textContent = 'Retry push to Vault';
+      }
+    }
+
+    function setPqcBadge(n) {
+      const b = document.getElementById('pqcBadge');
+      if (b) b.textContent = `${n} FLAGGED`;
+    }
+
+    async function openQuantumModal() {
+      const modal = document.getElementById('quantumModal');
+      modal.style.display = 'flex';
+
+      try {
+        const res = await fetch('/api/quantum/audit');
+        const data = await res.json();
+        const list = document.getElementById('pqcAssetsList');
+        const assets = data.quantum_vulnerable_assets || [];
+        if (!assets.length) { list.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted);">No cryptographic findings to show. Run a scan first (Steps 2 and 4).</div>'; return; }
+        list.innerHTML = assets.map(a => `
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:0.6rem; font-size:0.75rem;">
+            <div style="font-weight:700; color:#1f3b63;">${a.type}</div>
+            <div style="color:var(--text-muted); font-family:'JetBrains Mono'; margin:0.15rem 0;">${a.asset}</div>
+            <div style="color:#c2410c;">${a.risk}</div>
+            <div style="color:#059669; font-weight:600; margin-top:0.2rem;">→ ${a.recommendation}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('PQC audit fetch error:', e);
+      }
+    }
+    function closeQuantumModal() {
+      document.getElementById('quantumModal').style.display = 'none';
+    }
+
+    async function runCompletePipeline() {
+      await ingestRepository();
+      await executeSastScan();
+      await runAiDecoyTriage();
+      await executeDastScan();
+    }
+
+    // Load initial correlation data
+    loadCorrelationTable();
+
+    // One-click fill for the bundled demo app. Target URL comes from /api/config (VAJRA_DEFAULT_TARGET, which
+    // docker-compose points at the vulnerableapp service by name); nothing is pre-filled otherwise.
+    async function useBundledDemo() {
+      let url = 'http://127.0.0.1:9090';
+      try { const cfg = await (await fetch('/api/config')).json(); if (cfg.default_target_url) url = cfg.default_target_url; } catch (e) { /* keep fallback */ }
+      document.getElementById('targetUrlInput').value = url;
+      const d = document.getElementById('destDirInput');
+      d.value = 'targets/VulnerableApp'; d.dataset.manual = '1';
+    }
+  </script>
+</body>
+</html>

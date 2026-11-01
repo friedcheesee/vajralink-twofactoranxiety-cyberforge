@@ -1,0 +1,3 @@
+[submodule "targets/VulnerableApp"]
+	path = targets/VulnerableApp
+	url = https://github.com/SasanLabs/VulnerableApp
