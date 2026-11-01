@@ -31,7 +31,6 @@ A wrong link is treated as worse than a missed one.
    - A grey-zone score goes to an LLM arbiter, which sees the real code and evidence.
 5. **Merge duplicates:** one issue per sink, so five URLs that reach one method become one issue.
 
-Diagrams: [`docs/diagrams/`](docs/diagrams/). Open the `.drawio` files at <https://app.diagrams.net>.
 
 **Also built in:**
 - An OpenAI Decisions API second opinion on suppressed decoys. It returns a probability with zero output tokens.
